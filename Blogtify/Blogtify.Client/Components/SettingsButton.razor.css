@@ -1,0 +1,30 @@
+
+
+#settingsWrapper {
+    position: fixed;
+    bottom: 40px;
+    left: 40px;
+    z-index: 1000;
+}
+
+    #settingsWrapper ::deep .settings-btn {
+        border-radius: 50%;
+    }
+
+
+.settingsMenu {
+    display: none;
+    min-width: 220px;
+    position: absolute;
+    bottom: 44px;
+    left: 0;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+    .settingsMenu.show {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+    }

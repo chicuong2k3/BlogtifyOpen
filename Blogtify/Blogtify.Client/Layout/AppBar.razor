@@ -1,0 +1,83 @@
+﻿@using Bit.BlazorUI
+
+@inject NavigationManager NavigationManager
+@inject AppDataManager AppDataManager
+@inject BitThemeManager BitThemeManager
+@inject IJSRuntime JSRuntime
+
+<div class="appbar">
+    <div class="logo">
+        <a href="/">
+            <img src="logo.png" alt="CodeMagic" width="56" height="56" />
+        </a>
+    </div>
+
+    <BitStack Horizontal HorizontalAlign="BitAlignment.End">
+        <div class="search-container">
+            <BitSearchBox Placeholder="Tìm kiếm bài viết..."
+                          MinSuggestTriggerChars="1"
+                          SuggestItemsProvider="ProvideSuggestions"
+                          SuggestItemTemplate="@RenderSuggestion"
+                          DebounceTime="0" Immediate FixedIcon="true"
+                          OnSearch="OnSearchTriggered"
+                          MaxSuggestCount="5"
+                          Background="BitColorKind.Primary"
+                          Style="width:100%; max-width:400px;" />
+        </div>
+        <BitButton IconName="@(IsDark? BitIconName.HazyNight: BitIconName.Sunny)"
+                   IconOnly Variant="BitVariant.Text"
+                   OnClick="ChangeTheme" />
+    </BitStack>
+</div>
+
+@code {
+    private bool IsDark = false;
+
+    private RenderFragment<string> RenderSuggestion => (item) => @<div class="search-item">
+    <BitIcon IconName="@BitIconName.BookAnswers" Class="search-icon" />
+    <span style="margin-left: 8px">@item</span>
+</div>
+    ;
+
+    private IJSObjectReference? _module;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentTheme = await BitThemeManager.GetCurrentThemeAsync();
+        IsDark = currentTheme == "dark";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "/Layout/AppBar.razor.js");
+        await _module.InvokeVoidAsync("updateCodeBlock", IsDark);
+        StateHasChanged();
+    }
+
+    private async ValueTask<IEnumerable<string>> ProvideSuggestions(BitSearchBoxSuggestItemsProviderRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.SearchTerm))
+            return Array.Empty<string>();
+
+        var results = await AppDataManager.GetContentsAsync(1, Constants.SearchPageSize, request.SearchTerm, [], "desc");
+        return results.Select(r => r.Title).ToList();
+    }
+
+    private void OnSearchTriggered(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return;
+        NavigationManager.NavigateTo($"?Query={text}&Page=1", forceLoad: true);
+    }
+
+    private async Task ChangeTheme()
+    {
+        await BitThemeManager.ToggleDarkLightAsync();
+        var currentTheme = await BitThemeManager.GetCurrentThemeAsync();
+        IsDark = currentTheme == "dark";
+
+        if (_module != null)
+            await _module.InvokeVoidAsync("updateCodeBlock", IsDark);
+    }
+}

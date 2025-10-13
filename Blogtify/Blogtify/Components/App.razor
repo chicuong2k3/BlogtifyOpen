@@ -1,0 +1,139 @@
+﻿<!DOCTYPE html>
+<html lang="vi" bit-theme-system bit-theme-persist>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <base href="/" />
+
+    <script>
+        // disable auto-zoom of iOS Safari when focusing an input
+        (/iPad|iPhone|iPod/.test(navigator.userAgent)) &&
+        (document.querySelector('meta[name="viewport"]').content = 'width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0')
+    </script>
+
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="_content/Bit.BlazorUI/styles/bit.blazorui.css?v=@Bit.BlazorUI.Info.Version" rel="stylesheet" />
+    <link href="_content/Bit.BlazorUI.Icons/styles/bit.blazorui.icons.css?v=@Bit.BlazorUI.Info.Version" rel="stylesheet" />
+    <link href="Blogtify.styles.css" rel="stylesheet" />
+
+    <link href="css/prism.min.css" rel="stylesheet" />
+    <link href="css/prism-coy-without-shadows.min.css" rel="stylesheet" id="code-block-stylesheet" />
+    <link href="css/prism-line-numbers.min.css" rel="stylesheet" />
+    <link href="css/prism-show-language.min.css" rel="stylesheet" />
+    <link href="css/code-block.css" rel="stylesheet" />
+
+
+
+
+    <HeadOutlet @rendermode="InteractiveWebAssembly" />
+</head>
+
+<body class="line-numbers">
+    <Routes @rendermode="InteractiveWebAssembly" />
+
+    <script src="_framework/blazor.web.js" autostart="false"></script>
+
+    <script webworker-enabled type="module">
+        import * as wasmFeatureDetect from './js/wasm-feature-detect.1.8.0.js';
+        (async () => {
+            var url = new URL(location.href);
+            let verboseStart = url.searchParams.get('verboseStart') === '1';
+            var forceCompatMode = url.searchParams.get('forceCompatMode') === '1';
+            var supportsSimd = await wasmFeatureDetect.simd();
+            if (verboseStart) console.log('supportsSimd', supportsSimd);
+            // compat mode build could be built without wasm exception support if needed and detected here
+            var supportsExceptions = await wasmFeatureDetect.exceptions();
+            if (verboseStart) console.log('supportsExceptions', supportsExceptions);
+            var useCompatMode = !supportsSimd;
+            if (forceCompatMode) {
+                if (verboseStart) console.log('forceCompatMode', forceCompatMode);
+                useCompatMode = true;
+            }
+            if (verboseStart) console.log('useCompatMode', useCompatMode);
+            // Blazor United (.Net 8 Blazor Web App) Blazor.start settings are slightly different than Blazor WebAssembly (Blazor WebAssembly Standalone App)
+            var getRuntimeType = function () {
+                for (var script of document.scripts) {
+                    if (script.src.indexOf('_framework/blazor.web.js') !== -1) return 'united';
+                    if (script.src.indexOf('_framework/blazor.webassembly.js') !== -1) return 'wasm';
+                }
+                return '';
+            }
+            var runtimeType = getRuntimeType();
+            // customize the resource loader for the runtime that is loaded
+            // https://learn.microsoft.com/en-us/aspnet/core/blazor/fundamentals/startup?view=aspnetcore-8.0#load-boot-resources
+            var webAssemblyConfig = {
+                loadBootResource: function (type, name, defaultUri, integrity) {
+                    if (verboseStart) console.log(`Loading: '${type}', '${name}', '${defaultUri}', '${integrity}'`);
+                    if (useCompatMode) {
+                        let newUrl = defaultUri.replace('_framework/', '_frameworkCompat/');
+                        return newUrl;
+                    }
+                },
+            };
+            if (runtimeType === 'wasm') {
+                // Blazor WebAssembly Standalone App
+                Blazor.start(webAssemblyConfig);
+            } else if (runtimeType === 'united') {
+                // Blazor Web App (formally Blazor United)
+                Blazor.start({ webAssembly: webAssemblyConfig });
+            } else {
+                // Fallback supports both known Blazor WASM runtimes
+                // Modified loader that will work with both United and WASM runtimes (doesn't require detection)
+                webAssemblyConfig.webAssembly = webAssemblyConfig;
+                Blazor.start(webAssemblyConfig);
+            }
+        })();
+    </script>
+
+    <script src="_content/Bit.BlazorUI/scripts/bit.blazorui.js?v=@Bit.BlazorUI.Info.Version"></script>
+
+    <script src="js/theme.js" defer></script>
+    <script src="js/app.js" defer></script>
+
+    <script src="js/code-block.js" defer></script>
+    <script src="js/prism-core.min.js" defer></script>
+    <script src="js/prism-autoloader.min.js" defer></script>
+    <script src="js/prism-clike.min.js" defer></script>
+    <script src="js/prism-markup.min.js" defer></script>
+    <script src="js/prism-csharp.min.js" defer></script>
+    <script src="js/prism-yaml.min.js" defer></script>
+    <script src="js/prism-javascript.min.js" defer></script>
+    <script src="js/prism-typescript.min.js" defer></script>
+    <script src="js/prism-css.min.js" defer></script>
+    <script src="js/prism-bash.min.js" defer></script>
+    <script src="js/prism-python.min.js" defer></script>
+    <script src="js/prism-sql.min.js" defer></script>
+    <script src="js/prism-http.min.js" defer></script>
+    <script src="js/prism-line-numbers.min.js" defer></script>
+    <script src="js/prism-show-language.min.js" defer></script>
+
+    <!-- Adsense: Lazy load after onload to reduce third-party block -->
+    <script>
+        window.addEventListener('load', () => {
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6107540643501285';
+            script.crossOrigin = 'anonymous';
+            document.head.appendChild(script);
+        });
+    </script>
+
+    <script>
+        function initMath() {
+                window.mathjaxReady.then((MathJax) => {
+                    MathJax.typesetPromise().catch(err => console.error('MathJax typeset error:', err));
+                }).catch(err => console.error('MathJax load error:', err));
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) initMath();
+            });
+        });
+        document.querySelectorAll('.math-block').forEach(el => observer.observe(el));
+    </script>
+
+</body>
+
+</html>

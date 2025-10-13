@@ -1,0 +1,129 @@
+﻿@page "/"
+
+@inject NavigationManager NavigationManager
+@inject AppDataManager AppDataManager
+@inject PersistentComponentState State
+
+<BitCard NoShadow FullWidth>
+    <BitText Typography="BitTypography.H1">Các bài viết</BitText>
+    <BitStack Horizontal
+              Alignment="BitAlignment.End"
+              VerticalAlign="BitAlignment.Center"
+              Gap="1rem">
+        <BitDropdown Items="_sortFilters" TItem="BitDropdownItem<string>"
+                     TValue="string"
+                     @bind-Value="_selectedSortValue"
+                     OnChange="OnSortChanged" FitWidth="true">
+        </BitDropdown>
+    </BitStack>
+
+    <BitGrid>
+        @foreach (var content in _contents)
+        {
+            <BitGridItem ColumnSpan="12">
+                <ContentCard Content="@content" @key="@content.GetHashCode()" />
+            </BitGridItem>
+        }
+    </BitGrid>
+
+    @if (_hasMore && !_isLoading)
+    {
+        <BitStack HorizontalAlignment="Center" Margin="1rem 0">
+            <BitButton OnClick="LoadMore"
+                       IsLoading="_isLoading"
+                       ButtonType="BitButtonType.Button">
+                Tải thêm
+            </BitButton>
+        </BitStack>
+    }
+
+    @if (_hasMore && !_isLoading)
+    {
+        <BitButton Style="min-width: 140px"
+                   ButtonType="BitButtonType.Button"
+                   OnClick="LoadMore"
+                   IsLoading="_isLoading">
+            Tải thêm
+        </BitButton>
+    }
+</BitCard>
+
+@code {
+    private List<ContentDto> _contents = new();
+    private List<BitDropdownItem<string>> _sortFilters = new()
+    {
+        new() { Text = "Mới nhất", Value = "desc" },
+        new() { Text = "Cũ nhất", Value = "asc" }
+    };
+
+    private string _selectedSortValue = "desc";
+    private int _totalContent;
+    private bool _isLoading = true;
+    private bool _hasMore = true;
+
+    private PersistingComponentStateSubscription? persistingSubscription;
+
+    [SupplyParameterFromQuery]
+    public string Query { get; set; } = string.Empty;
+
+    [SupplyParameterFromQuery]
+    public int Page { get; set; }
+
+    [SupplyParameterFromQuery(Name = "categories")]
+    public string[] Categories { get; set; } = Array.Empty<string>();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _totalContent = await AppDataManager.GetTotalContentsAsync(Query ?? string.Empty, Categories.ToList());
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
+    {
+        _isLoading = true;
+
+        persistingSubscription = State.RegisterOnPersisting(() =>
+        {
+            State.PersistAsJson("contents", _contents);
+            State.PersistAsJson("hasMore", _hasMore);
+            return Task.CompletedTask;
+        });
+
+        if (!State.TryTakeFromJson<List<ContentDto>>("contents", out var restored))
+        {
+            _contents = await AppDataManager.GetContentsAsync(Page, Constants.PageSize, Query ?? string.Empty, Categories.ToList(), _selectedSortValue);
+        }
+        else
+        {
+            _contents = restored ?? new();
+        }
+
+        if (!State.TryTakeFromJson<bool>("hasMore", out var hasMoreRestored))
+        {
+            _hasMore = _contents.Count < _totalContent;
+        }
+        else
+        {
+            _hasMore = hasMoreRestored;
+        }
+
+        _isLoading = false;
+    }
+
+    private async Task LoadMore()
+    {
+        Page++;
+        await LoadPosts();
+    }
+
+    private async Task OnSortChanged(string value)
+    {
+        if (!string.IsNullOrEmpty(value))
+        {
+            _selectedSortValue = value;
+            Page = 0;
+            _contents.Clear();
+            await LoadPosts();
+        }
+    }
+}

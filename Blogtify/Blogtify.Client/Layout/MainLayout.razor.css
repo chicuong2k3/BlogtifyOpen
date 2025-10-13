@@ -1,0 +1,94 @@
+﻿
+::deep .toggle-menu-btn {
+    position: fixed;
+    bottom: 100px;
+    right: 40px;
+    z-index: 1000;
+    border-radius: 50%;
+}
+
+.sidebar {
+    margin: calc(60.667px + 1rem) 0 0 0;
+}
+
+    /* Sidebar (desktop) */
+    .sidebar.desktop {
+        position: sticky;
+        top: 56px;
+        min-height: calc(100vh - 56px);
+        padding: 1rem;
+        overflow-y: auto;
+    }
+
+
+
+    .sidebar ::deep .bit-nav {
+        font-size: 0.95rem;
+    }
+
+/* Main content */
+.main-content {
+    flex: 1;
+    padding: 1.5rem;
+    min-height: 100vh;
+    margin: calc(60.667px + 1rem) 0 0 0;
+}
+
+/* Drawer content */
+.drawer-content {
+    padding: 1rem;
+}
+
+/* Hide on desktop */
+@media (min-width: 993px) {
+    .menu-toggle {
+        display: none !important;
+    }
+
+    ::deep .toggle-menu-btn {
+        display: none !important;
+    }
+}
+
+/* Mobile layout */
+@media (max-width: 992px) {
+    .sidebar.desktop {
+        display: none;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+    .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+/* Scrollbars */
+.sidebar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+}
+
+/* Smooth expand animation */
+.sidebar ::deep .bit-nav-item-children {
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+    .sidebar ::deep .bit-nav-item-children.collapsed {
+        opacity: 0;
+        max-height: 0;
+    }
+
+    .sidebar ::deep .bit-nav-item-children.expanded {
+        opacity: 1;
+        max-height: 800px;
+    }

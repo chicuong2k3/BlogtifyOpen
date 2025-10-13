@@ -1,0 +1,23 @@
+::deep.content-link {
+    display: inline-block;
+    max-width: 100%;
+    color: var(--bit-clr-txt);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+    ::deep.content-link:hover {
+        color: var(--bit-clr-txt-pri);
+        text-decoration: underline;
+    }
+
+    ::deep.content-link span {
+        display: inline-block;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+    }

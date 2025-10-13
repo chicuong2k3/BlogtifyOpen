@@ -1,0 +1,141 @@
+﻿
+:root {
+    --bit-font-family: var(--font-base-family);
+    --bit-font-size: var(--font-base);
+    --font-scale: 1.15;
+    --font-h1: calc(var(--font-base) * var(--font-scale) * 1.4);
+    --font-h2: calc(var(--font-base) * var(--font-scale) * 1.3);
+    --font-h3: calc(var(--font-base) * var(--font-scale) * 1.2);
+    --font-h4: calc(var(--font-base) * var(--font-scale) * 1.1);
+    --font-h5: calc(var(--font-base) * var(--font-scale) * 1);
+    --font-h6: calc(var(--font-base) * var(--font-scale) * 0.9);
+    --bit-tpg-h1-font-size: var(--font-h1) !important;
+    --bit-tpg-h2-font-size: var(--font-h2) !important;
+    --bit-tpg-h3-font-size: var(--font-h3) !important;
+    --bit-tpg-h4-font-size: var(--font-h4) !important;
+    --bit-tpg-h5-font-size: var(--font-h5) !important;
+    --bit-tpg-h6-font-size: var(--font-h6) !important;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+h1 {
+    font-size: var(--font-h1);
+}
+
+h2 {
+    font-size: var(--font-h2);
+}
+
+h3 {
+    font-size: var(--font-h3);
+}
+
+h4 {
+    font-size: var(--font-h4);
+}
+
+h5 {
+    font-size: var(--font-h5);
+}
+
+h6 {
+    font-size: var(--font-h6);
+}
+
+
+/* Theme */
+:root[bit-theme="dark"] {
+    /* Primary tone – giống Shadcn accent color (indigo) */
+    --bit-clr-pri: #6366f1;
+    --bit-clr-pri-hover: #818cf8;
+    --bit-clr-pri-active: #4f46e5;
+    --bit-clr-pri-dark: #3730a3;
+    --bit-clr-pri-light: #a5b4fc;
+    --bit-clr-pri-text: #ffffff;
+    /* Secondary tone – dùng gray đậm, nhẹ hơn background */
+    --bit-clr-sec: #1e1e2f;
+    --bit-clr-sec-hover: #2a2a40;
+    --bit-clr-sec-active: #32324b;
+    --bit-clr-sec-dark: #181827;
+    --bit-clr-sec-light: #2f2f45;
+    --bit-clr-sec-text: #e5e7eb;
+    /* Background layers – tone đen/xanh đen theo chiều sâu */
+    --bit-clr-bg-pri: #09090b; /* main app background */
+    --bit-clr-bg-pri-hover: #111113;
+    --bit-clr-bg-pri-active: #18181b;
+    --bit-clr-bg-sec: #111113; /* card background */
+    --bit-clr-bg-sec-hover: #18181b;
+    --bit-clr-bg-sec-active: #1f1f25;
+    --bit-clr-bg-ter: #18181b;
+    --bit-clr-bg-ter-hover: #202025;
+    --bit-clr-bg-ter-active: #27272a;
+    --bit-clr-bg-overlay: rgba(0, 0, 0, 0.7);
+    /* Text and foreground */
+    --bit-clr-fg-pri: #f4f4f5; /* main text */
+    --bit-clr-fg-sec: #a1a1aa; /* secondary text */
+    --bit-clr-fg-ter: #71717a; /* subtle */
+    --bit-clr-fg-dis: #3f3f46; /* disabled */
+    /* Borders */
+    --bit-clr-brd-pri: #27272a;
+    --bit-clr-brd-sec: #3f3f46;
+    --bit-clr-brd-ter: #52525b;
+    --bit-clr-brd-dis: #27272a;
+    /* Info / Success / Warning / Error */
+    --bit-clr-inf: #38bdf8; /* cyan tone */
+    --bit-clr-suc: #22c55e; /* green tone */
+    --bit-clr-wrn: #eab308; /* yellow tone */
+    --bit-clr-err: #ef4444; /* red tone */
+    --bit-clr-inf-text: #e0f2fe;
+    --bit-clr-suc-text: #dcfce7;
+    --bit-clr-wrn-text: #fef9c3;
+    --bit-clr-err-text: #fee2e2;
+    /* Shadows – soft, subtle, like shadcn */
+    --bit-shd-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+    --bit-shd-nm: 0 2px 4px rgba(0, 0, 0, 0.15);
+    --bit-shd-md: 0 4px 8px rgba(0, 0, 0, 0.2);
+    --bit-shd-lg: 0 8px 16px rgba(0, 0, 0, 0.25);
+    --bit-shd-inner: inset 0 1px 2px rgba(255, 255, 255, 0.05);
+    /* Neutral palette */
+    --bit-clr-ntr-white: #ffffff;
+    --bit-clr-ntr-black: #000000;
+    --bit-clr-ntr-gray10: #fafafa;
+    --bit-clr-ntr-gray20: #f4f4f5;
+    --bit-clr-ntr-gray30: #e4e4e7;
+    --bit-clr-ntr-gray40: #d4d4d8;
+    --bit-clr-ntr-gray50: #a1a1aa;
+    --bit-clr-ntr-gray60: #71717a;
+    --bit-clr-ntr-gray70: #52525b;
+    --bit-clr-ntr-gray80: #3f3f46;
+    --bit-clr-ntr-gray90: #27272a;
+    --bit-clr-ntr-gray100: #18181b;
+}
+
+
+/* Theme */
+
+
+
+
+
+* {
+    box-sizing: border-box;
+    font: inherit;
+    -webkit-text-size-adjust: none;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    scroll-behavior: smooth;
+    font-family: var(--font-base-family) !important;
+    font-size: var(--font-base) !important;
+}

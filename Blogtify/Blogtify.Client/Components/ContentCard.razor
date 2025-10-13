@@ -1,0 +1,14 @@
+﻿<div>
+    <BitLink Class="content-link"
+             Href="@Content.Route"
+             AriaLabel="@Content.Title"
+             Rel="BitLinkRel.Bookmark"
+             HtmlAttributes="@(new Dictionary<string, object> { { "itemprop", "url" } })">
+        <span itemprop="headline">@Content.Title</span>
+    </BitLink>
+</div>
+
+@code {
+    [Parameter]
+    public ContentDto Content { get; set; } = default!;
+}

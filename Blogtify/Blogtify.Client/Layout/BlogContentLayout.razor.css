@@ -1,0 +1,67 @@
+
+::deep .category-tag:hover {
+    cursor: pointer;
+}
+
+::deep.content {
+    width: 100%;
+    margin: 0 auto;
+    padding: 1rem;
+    overflow-wrap: break-word;
+}
+
+    ::deep.content ul,
+    ::deep.content ol {
+        padding-left: 1.5em !important;
+        margin: 0 0 1em 0 !important;
+    }
+
+    ::deep.content ul {
+        list-style-type: disc !important;
+        list-style-position: outside !important;
+    }
+
+    ::deep.content ol {
+        list-style-type: decimal !important;
+        list-style-position: outside !important;
+    }
+
+    ::deep .content ul,
+    ::deep .content ol {
+        padding-left: 1.5em !important;
+        margin: 0 0 1em 0 !important;
+    }
+
+    ::deep .content ul {
+        list-style-type: disc !important;
+        list-style-position: outside !important;
+    }
+
+    ::deep .content ol {
+        list-style-type: decimal !important;
+        list-style-position: outside !important;
+    }
+
+.reading-progress-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 10000;
+    width: 100%;
+}
+
+
+
+::deep img {
+    max-width: 80%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+
+.reading-progress-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}

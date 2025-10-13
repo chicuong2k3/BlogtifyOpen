@@ -1,0 +1,37 @@
+﻿@inject IJSRuntime JSRuntime
+
+<div>
+    <BitButton OnClick="ScrollToTop" AriaLabel="Quay lại đầu trang" Id="backToTopBtn"
+               IconName="@BitIconName.Up"
+               Color="BitColor.Primary" Size="BitSize.Large"
+               Class="back-to-top-btn" />
+</div>
+
+@code {
+    private IJSObjectReference? _module;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Components/BackToTopButton.razor.js");
+            await _module.InvokeVoidAsync("initBackToTopButton", "backToTopBtn");
+        }
+    }
+
+    private async Task ScrollToTop()
+    {
+        if (_module is not null)
+        {
+            await _module.InvokeVoidAsync("scrollToTop");
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_module is not null)
+        {
+            await _module.DisposeAsync();
+        }
+    }
+}

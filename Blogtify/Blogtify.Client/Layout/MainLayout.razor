@@ -1,0 +1,102 @@
+﻿@using Microsoft.Extensions.Options
+@using Bit.BlazorUI
+@inherits LayoutComponentBase
+
+@inject NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+@inject AppDataManager AppDataManager
+@inject IOptions<AdSenseSettings> AdSenseOptions
+
+<PageTitle>Code Magic</PageTitle>
+
+<HeadContent>
+    <meta name="description"
+          content="Code Magic là không gian chuyên sâu lưu trữ và trao đổi kiến thức về phát triển phần mềm, lập trình điện tử, toán học và vật lý. Khám phá hành trình biến khoa học thành công cụ giải quyết vấn đề phức tạp." />
+</HeadContent>
+
+<BitLayout>
+    <Header>
+        <AppBar />
+    </Header>
+    <NavPanel>
+        <!-- Sidebar Desktop -->
+        <aside class="sidebar desktop">
+            <BitNav Items="@sidebarItems" FitWidth="true"
+                    DefaultSelectedItem="@sidebarItems[0]"
+                    OnItemClick="(BitNavItem item) => OnSelectedItemChanged(item)" />
+        </aside>
+
+        <!-- Sidebar Mobile (Drawer) -->
+        <div>
+            <BitPanel @bind-IsOpen="isDrawerOpen"
+                      Position="BitPanelPosition.Start"
+                      Size="280">
+                <BitNav Items="@sidebarItems"
+                        OnItemClick="(BitNavItem item) => OnSelectedItemChanged(item)" />
+            </BitPanel>
+        </div>
+    </NavPanel>
+    <Main>
+        <main class="main-content">
+            @Body
+        </main>
+    </Main>
+    <Footer>
+        <Footer />
+    </Footer>
+</BitLayout>
+
+<div>
+    <BitButton OnClick="ToggleDrawer" AriaLabel="Bật tắt menu"
+               IconName="@BitIconName.ContextMenu"
+               Color="BitColor.Primary" Size="BitSize.Large"
+               Class="toggle-menu-btn" />
+</div>
+<SettingsButton />
+<BackToTopButton />
+
+@code {
+    private List<BitNavItem> sidebarItems = new();
+    private bool isDrawerOpen;
+
+    protected override void OnInitialized()
+    {
+        var postCategories = AppDataManager.AllPostCategories;
+
+        var root = new BitNavItem
+        {
+            Text = "CHỦ ĐỀ",
+            IconName = "Bookmarks",
+            ChildItems = postCategories.Select(BuildSidebarItem).ToList()
+        };
+
+        sidebarItems =
+        [
+            root,
+            new BitNavItem
+            {
+                Text = "GIỚI THIỆU",
+                IconName = "Info",
+                Url = "/about"
+            }
+        ];
+    }
+
+    private BitNavItem BuildSidebarItem(string category) => new()
+    {
+        Text = category.ToUpperInvariant(),
+        IconName = "Cafe",
+        Url = $"/?categories={category}",
+        Title = category
+    };
+
+    private void ToggleDrawer() => isDrawerOpen = !isDrawerOpen;
+
+    private void OnSelectedItemChanged(BitNavItem item)
+    {
+        if (!string.IsNullOrEmpty(item.Url))
+            NavigationManager.NavigateTo(item.Url);
+
+        isDrawerOpen = false;
+    }
+}

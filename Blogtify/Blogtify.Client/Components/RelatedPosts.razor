@@ -1,0 +1,26 @@
+﻿@inject AppDataManager AppDataManager
+
+@if (_contents.Any())
+{
+    @foreach (var content in _contents)
+    {
+        <ContentCard Content="@content" />
+    }
+}
+else
+{
+
+}
+
+
+@code {
+    [Parameter, EditorRequired]
+    public ContentDto Content { get; set; } = default!;
+
+    private List<ContentDto> _contents = [];
+
+    protected override void OnParametersSet()
+    {
+        _contents = AppDataManager.GetRecommendContents(Content);
+    }
+}
