@@ -5,7 +5,7 @@
 @inject BitThemeManager BitThemeManager
 @inject IJSRuntime JSRuntime
 
-<div class="appbar">
+<div class="appbar" style="background-color: var(@BitCss.Var.Color.Background.Secondary)">
     <div class="logo">
         <a href="/">
             <img src="logo.png" alt="CodeMagic" width="56" height="56" />
@@ -24,9 +24,10 @@
                           Background="BitColorKind.Primary"
                           Style="width:100%; max-width:400px;" />
         </div>
-        <BitButton IconName="@(IsDark? BitIconName.HazyNight: BitIconName.Sunny)"
-                   IconOnly Variant="BitVariant.Text"
-                   OnClick="ChangeTheme" />
+        <BitToggleButton OnIconName="@BitIconName.HazyDay" IsChecked="@(!IsDark)"
+                         OffIconName="@BitIconName.HazyNight"
+                         IconOnly AriaLabel="Dark Mode" Variant="BitVariant.Outline"
+                         OnClick="ChangeTheme" />
     </BitStack>
 </div>
 
@@ -68,7 +69,7 @@
     private void OnSearchTriggered(string? text)
     {
         if (string.IsNullOrWhiteSpace(text)) return;
-        NavigationManager.NavigateTo($"?Query={text}&Page=1", forceLoad: true);
+        NavigationManager.NavigateTo($"?Query={text}&Page=1");
     }
 
     private async Task ChangeTheme()

@@ -14,37 +14,32 @@
           content="Code Magic là không gian chuyên sâu lưu trữ và trao đổi kiến thức về phát triển phần mềm, lập trình điện tử, toán học và vật lý. Khám phá hành trình biến khoa học thành công cụ giải quyết vấn đề phức tạp." />
 </HeadContent>
 
-<BitLayout>
-    <Header>
-        <AppBar />
-    </Header>
-    <NavPanel>
-        <!-- Sidebar Desktop -->
-        <aside class="sidebar desktop">
-            <BitNav Items="@sidebarItems" FitWidth="true"
-                    DefaultSelectedItem="@sidebarItems[0]"
-                    OnItemClick="(BitNavItem item) => OnSelectedItemChanged(item)" />
-        </aside>
+<AppBar />
 
-        <!-- Sidebar Mobile (Drawer) -->
-        <div>
-            <BitPanel @bind-IsOpen="isDrawerOpen"
-                      Position="BitPanelPosition.Start"
-                      Size="280">
-                <BitNav Items="@sidebarItems"
-                        OnItemClick="(BitNavItem item) => OnSelectedItemChanged(item)" />
-            </BitPanel>
-        </div>
-    </NavPanel>
-    <Main>
-        <main class="main-content">
-            @Body
-        </main>
-    </Main>
-    <Footer>
-        <Footer />
-    </Footer>
-</BitLayout>
+<!-- Sidebar Desktop -->
+<aside class="sidebar desktop">
+    <BitNav Items="@sidebarItems" AriaLabel="Menu bên"
+            DefaultSelectedItem="@sidebarItems[0]"
+            AllExpanded Mode="BitNavMode.Automatic" Style="width: 230px"
+            Match="BitNavMatch.Prefix" SelectedItem="@selectedItem"
+            OnItemClick="(BitNavItem item) => OnSelectedItemChanged(item)" />
+</aside>
+
+<!-- Sidebar Mobile (Drawer) -->
+<div class="sidebar">
+    <BitPanel @bind-IsOpen="isDrawerOpen" AriaLabel="Menu bên"
+              Position="BitPanelPosition.Start">
+        <BitNav Items="@sidebarItems" DefaultSelectedItem="@sidebarItems[0]"
+                AllExpanded Mode="BitNavMode.Automatic" Style="width: 230px"
+                Match="BitNavMatch.Prefix" SelectedItem="@selectedItem"
+                OnItemClick="(BitNavItem item) => OnSelectedItemChanged(item)" />
+    </BitPanel>
+</div>
+<main class="main-content">
+    @Body
+</main>
+
+<Footer />
 
 <div>
     <BitButton OnClick="ToggleDrawer" AriaLabel="Bật tắt menu"
@@ -58,6 +53,7 @@
 @code {
     private List<BitNavItem> sidebarItems = new();
     private bool isDrawerOpen;
+    private BitNavItem selectedItem = new();
 
     protected override void OnInitialized()
     {
@@ -67,6 +63,7 @@
         {
             Text = "CHỦ ĐỀ",
             IconName = "Bookmarks",
+            AriaLabel = "Chủ đề",
             ChildItems = postCategories.Select(BuildSidebarItem).ToList()
         };
 
@@ -77,9 +74,12 @@
             {
                 Text = "GIỚI THIỆU",
                 IconName = "Info",
+                AriaLabel = "Giới thiệu",
                 Url = "/about"
             }
         ];
+
+        UpdateSelectedItem();
     }
 
     private BitNavItem BuildSidebarItem(string category) => new()
@@ -95,8 +95,49 @@
     private void OnSelectedItemChanged(BitNavItem item)
     {
         if (!string.IsNullOrEmpty(item.Url))
+        {
             NavigationManager.NavigateTo(item.Url);
+            selectedItem = item;
+        }
 
         isDrawerOpen = false;
+    }
+
+    private void UpdateSelectedItem()
+    {
+        var currentUri = NavigationManager.Uri;
+        var currentPath = new Uri(currentUri).PathAndQuery;
+
+        selectedItem = FindMatchingItem(sidebarItems, currentPath);
+        StateHasChanged();
+    }
+
+    private BitNavItem? FindMatchingItem(List<BitNavItem> items, string currentPath)
+    {
+        foreach (var item in items)
+        {
+            if (item.Url != null && currentPath.StartsWith(item.Url, StringComparison.OrdinalIgnoreCase))
+            {
+                return item;
+            }
+
+            if (item.ChildItems != null)
+            {
+                var matchedChild = FindMatchingItem(item.ChildItems, currentPath);
+                if (matchedChild != null)
+                {
+                    return matchedChild;
+                }
+            }
+        }
+        return null;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            NavigationManager.LocationChanged += (sender, args) => UpdateSelectedItem();
+        }
     }
 }

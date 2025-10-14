@@ -1,17 +1,12 @@
 ﻿@inject AppDataManager AppDataManager
 
-@if (_contents.Any())
-{
+<BitShimmer Loaded="@(!isLoading)" AriaLabel="Đang tải bài viết liên quan"
+            Height="1.5rem" Background="BitColor.PrimaryBackground">
     @foreach (var content in _contents)
     {
         <ContentCard Content="@content" />
     }
-}
-else
-{
-
-}
-
+</BitShimmer>
 
 @code {
     [Parameter, EditorRequired]
@@ -19,8 +14,12 @@ else
 
     private List<ContentDto> _contents = [];
 
+    private bool isLoading = false;
+
     protected override void OnParametersSet()
     {
+        isLoading = true;
         _contents = AppDataManager.GetRecommendContents(Content);
+        isLoading = false;
     }
 }

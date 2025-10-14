@@ -4,48 +4,46 @@
 @inject AppDataManager AppDataManager
 @inject PersistentComponentState State
 
-<BitCard NoShadow FullWidth>
-    <BitText Typography="BitTypography.H1">Các bài viết</BitText>
-    <BitStack Horizontal
-              Alignment="BitAlignment.End"
-              VerticalAlign="BitAlignment.Center"
-              Gap="1rem">
-        <BitDropdown Items="_sortFilters" TItem="BitDropdownItem<string>"
-                     TValue="string"
-                     @bind-Value="_selectedSortValue"
-                     OnChange="OnSortChanged" FitWidth="true">
-        </BitDropdown>
+<BitCard NoShadow FullWidth Background="BitColorKind.Transparent">
+
+    <BitStack Gap="1rem">
+        <BitText Typography="BitTypography.H1">Các bài viết</BitText>
+        <BitStack Alignment="BitAlignment.End">
+            <BitDropdown Items="_sortFilters" TItem="BitDropdownItem<string>"
+                         TValue="string" AriaLabel="Sắp xếp theo"
+                         @bind-Value="_selectedSortValue"
+                         OnChange="OnSortChanged" FitWidth="true">
+            </BitDropdown>
+        </BitStack>
+
+        @if (_contents.Any())
+        {
+            <BitStack Gap="8px">
+                @foreach (var content in _contents)
+                {
+                    <ContentCard Content="@content" @key="@content.GetHashCode()" />
+                }
+            </BitStack>
+        }
+        else
+        {
+            <BitText Typography="BitTypography.Subtitle1" Style="font-weight: 600">Không có kết quả nào.</BitText>
+        }
+
+        @if (_hasMore && !_isLoading)
+        {
+            <BitStack Alignment="BitAlignment.Center">
+                <BitButton OnClick="LoadMore"
+                           IsLoading="_isLoading"
+                           ButtonType="BitButtonType.Button">
+                    Tải thêm
+                </BitButton>
+            </BitStack>
+        }
+
     </BitStack>
 
-    <BitGrid>
-        @foreach (var content in _contents)
-        {
-            <BitGridItem ColumnSpan="12">
-                <ContentCard Content="@content" @key="@content.GetHashCode()" />
-            </BitGridItem>
-        }
-    </BitGrid>
 
-    @if (_hasMore && !_isLoading)
-    {
-        <BitStack HorizontalAlignment="Center" Margin="1rem 0">
-            <BitButton OnClick="LoadMore"
-                       IsLoading="_isLoading"
-                       ButtonType="BitButtonType.Button">
-                Tải thêm
-            </BitButton>
-        </BitStack>
-    }
-
-    @if (_hasMore && !_isLoading)
-    {
-        <BitButton Style="min-width: 140px"
-                   ButtonType="BitButtonType.Button"
-                   OnClick="LoadMore"
-                   IsLoading="_isLoading">
-            Tải thêm
-        </BitButton>
-    }
 </BitCard>
 
 @code {

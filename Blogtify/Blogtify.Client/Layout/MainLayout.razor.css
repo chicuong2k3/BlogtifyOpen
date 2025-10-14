@@ -3,18 +3,20 @@
     position: fixed;
     bottom: 100px;
     right: 40px;
-    z-index: 1000;
+    z-index: 90;
     border-radius: 50%;
 }
 
 .sidebar {
     margin: calc(60.667px + 1rem) 0 0 0;
+    z-index: 1000;
 }
 
     /* Sidebar (desktop) */
     .sidebar.desktop {
-        position: sticky;
-        top: 56px;
+        position: fixed;
+        left: 0;
+        top: 0;
         min-height: calc(100vh - 56px);
         padding: 1rem;
         overflow-y: auto;
@@ -27,16 +29,14 @@
     }
 
 /* Main content */
-.main-content {
-    flex: 1;
+main.main-content {
     padding: 1.5rem;
     min-height: 100vh;
-    margin: calc(60.667px + 1rem) 0 0 0;
-}
-
-/* Drawer content */
-.drawer-content {
-    padding: 1rem;
+    max-width: 100%;
+    margin: calc(60.667px + 1rem) 0 0 250px;
+    overflow-x: auto;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 
 /* Hide on desktop */
@@ -51,13 +51,14 @@
 }
 
 /* Mobile layout */
-@media (max-width: 992px) {
+@media (max-width: 768px) {
     .sidebar.desktop {
         display: none;
     }
 
-    .main-content {
-        padding: 1rem;
+    main.main-content {
+        padding: 0.5rem;
+        margin: 0;
     }
 
     .menu-toggle {
