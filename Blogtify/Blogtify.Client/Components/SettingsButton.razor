@@ -3,87 +3,36 @@
 @inject HotKeys HotKeys
 @inject BitThemeManager BitThemeManager
 
-
-
 <div id="settingsWrapper">
-    <div>
-        <BitButton IconName="@BitIconName.Settings"
-                   AriaLabel="Cài đặt"
-                   Size="BitSize.Large" Class="settings-btn"
-                   OnClick="ToggleSettingsMenu" />
-    </div>
+    <BitButton IconName="@BitIconName.Settings"
+               AriaLabel="Cài đặt"
+               Size="BitSize.Large"
+               Class="settings-btn"
+               OnClick="ToggleSettingsMenu" />
 
-    <div class="@(showSettingsMenu == true ? "settingsMenu show" : "settingsMenu")">
+    <div class="settingsMenu @(showSettingsMenu ? "show" : "")">
         <BitStack Gap="0">
-            <BitButton AriaLabel="Đổi phông chữ" FullWidth
-                       Style="border-radius: 0"
-                       OnClick="@(() => ToggleSubMenu("font"))">
-                ĐỔI PHÔNG CHỮ
-            </BitButton>
-
-            <BitButton AriaLabel="Đổi kích cỡ chữ" FullWidth
-                       Style="border-radius: 0"
-                       OnClick="@(() => ToggleSubMenu("fontsize"))">
-                ĐỔI KÍCH CỠ CHỮ
-            </BitButton>
+            @foreach (var item in mainMenu)
+            {
+                <BitButton FullWidth
+                           Style="border-radius: 0;"
+                           OnClick="@(() => ToggleSubMenu(item.Id))">
+                    @item.Label
+                </BitButton>
+            }
         </BitStack>
 
         @if (showFontMenu)
         {
             <BitSeparator />
-            <BitStack Gap="0" Style="max-height:250px; overflow-y:auto;">
-                @foreach (var font in fontList)
-                {
-
-                    <BitButton FullWidth OnClick="@(() => ChangeFont(font, false))"
-                               Style="border-radius: 0;text-align: start;">
-                        <ChildContent>
-                            <BitStack Horizontal
-                                      HorizontalAlign="BitAlignment.SpaceBetween"
-                                      VerticalAlign="BitAlignment.Center">
-                                <BitText Align="BitTextAlign.Start">@font</BitText>
-                                @if (font == selectedFont)
-                                {
-                                    <BitIcon IconName="@BitIconName.CheckMark" />
-                                }
-                            </BitStack>
-                        </ChildContent>
-
-                    </BitButton>
-
-
-                }
-            </BitStack>
+            @RenderMenu(fontList, selectedFont, ChangeFont)
         }
 
         @if (showFontSizeMenu)
         {
             <BitSeparator />
-            <BitStack Gap="0" Style="max-height:250px; overflow-y:auto;">
-                @foreach (var size in fontSizeList)
-                {
-
-                    <BitButton FullWidth OnClick="@(() => ChangeFontSize(size, false))"
-                               Style="border-radius: 0;text-align: start;">
-                        <ChildContent>
-                            <BitStack Horizontal
-                                      HorizontalAlign="BitAlignment.SpaceBetween"
-                                      VerticalAlign="BitAlignment.Center">
-                                <BitText Align="BitTextAlign.Start">@size</BitText>
-                                @if (size == selectedFontSize)
-                                {
-                                    <BitIcon IconName="@BitIconName.CheckMark" />
-                                }
-                            </BitStack>
-                        </ChildContent>
-
-                    </BitButton>
-
-
-                }
-            </BitStack>
+            @RenderMenu(fontSizeList, selectedFontSize, ChangeFontSize)
         }
-
     </div>
 </div>
 
@@ -96,15 +45,17 @@
     private IJSObjectReference? _module;
     private DotNetObjectReference<object>? selfRef;
 
-    private string selectedFont = "Inter";
+    private string selectedFont = "Be VietNam Pro";
     private string selectedFontSize = "14px";
 
-    private readonly List<string> fontList = new()
-    {
-        "Inter", "Roboto", "Noto Sans", "Lora", "Raleway",
-        "Nunito", "Source Code Pro", "Montserrat",
-        "Encode Sans", "Geologica"
-    };
+    private readonly List<(string Id, string Label)> mainMenu =
+    [
+        ("font", "ĐỔI PHÔNG CHỮ"),
+        ("fontsize", "ĐỔI KÍCH CỠ CHỮ")
+    ];
+
+    private readonly List<string> fontList = Constants.Fonts;
+
 
     private readonly List<string> fontSizeList = Enumerable.Range(14, 5).Select(x => $"{x}px").ToList();
 
@@ -121,8 +72,7 @@
         _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./Components/SettingsButton.razor.js");
 
         selfRef = DotNetObjectReference.Create<object>(this);
-        await _module.InvokeVoidAsync("outsideClickHelper.register", "#settingsWrapper",
-            DotNetObjectReference.Create(this));
+        await _module.InvokeVoidAsync("outsideClickHelper.register", "#settingsWrapper", selfRef);
 
         _hotKeysContext = HotKeys.CreateContext()
                                  .Add(ModCode.Ctrl, Code.Q, ToggleSettingsMenu, new());
@@ -135,58 +85,71 @@
         {
             showFontMenu = showFontSizeMenu = false;
         }
-        StateHasChanged();
     }
 
     private void ToggleSubMenu(string menu)
     {
-        if (menu == "font")
-        {
-            showFontMenu = !showFontMenu;
-            if (showFontMenu) showFontSizeMenu = false;
-        }
-        else
-        {
-            showFontSizeMenu = !showFontSizeMenu;
-            if (showFontSizeMenu) showFontMenu = false;
-        }
+        showFontMenu = menu == "font" && !showFontMenu;
+        showFontSizeMenu = menu == "fontsize" && !showFontSizeMenu;
+
+        if (menu == "font") showFontSizeMenu = false;
+        if (menu == "fontsize") showFontMenu = false;
     }
 
     private async Task ChangeFont(string font, bool closeMenu = true)
     {
         selectedFont = font;
         await FontProvider.SetFontAsync(font);
-        await JSRuntime.InvokeVoidAsync("themeSwitcher.loadGoogleFont", selectedFont);
-        await JSRuntime.InvokeVoidAsync("themeSwitcher.setFont", selectedFont);
-        StateHasChanged();
+        await JSRuntime.InvokeVoidAsync("themeSwitcher.loadGoogleFont", font);
+        await JSRuntime.InvokeVoidAsync("themeSwitcher.setFont", font);
     }
 
     private async Task ChangeFontSize(string size, bool closeMenu = true)
     {
         selectedFontSize = size;
         await FontProvider.SetFontSizeAsync(size);
-        await JSRuntime.InvokeVoidAsync("themeSwitcher.setFontSize", selectedFontSize);
+        await JSRuntime.InvokeVoidAsync("themeSwitcher.setFontSize", size);
+    }
+
+    private RenderFragment RenderMenu(IEnumerable<string> items, string selected, Func<string, bool, Task> onClick)
+        => @<BitStack Gap="0" Style="max-height:250px; overflow-y:auto;">
+@foreach (var item in items)
+    {
+    <div style="width: 100%">
+        <BitButton FullWidth OnClick="@(() => onClick(item, false))"
+                   Class="submenu-btn" Color="BitColor.Secondary">
+            <BitStack Horizontal
+                      HorizontalAlign="BitAlignment.SpaceBetween"
+                      VerticalAlign="BitAlignment.Center">
+                <BitText>@item</BitText>
+                @if (item == selected)
+                                {
+                <BitIcon IconName="@BitIconName.CheckMark" Color="BitColor.Tertiary" />
+                                }
+            </BitStack>
+        </BitButton>
+    </div>
+    }
+</BitStack>;
+
+[JSInvokable]
+public void CloseMenus()
+{
+    if (showSettingsMenu)
+    {
+        showSettingsMenu = false;
         StateHasChanged();
     }
+}
 
-    [JSInvokable]
-    public void CloseMenus()
-    {
-        if (showSettingsMenu)
-        {
-            showSettingsMenu = false;
-            StateHasChanged();
-        }
-    }
+public async ValueTask DisposeAsync()
+{
+    if (_hotKeysContext is not null)
+        await _hotKeysContext.DisposeAsync();
 
-    public async ValueTask DisposeAsync()
-    {
-        if (_hotKeysContext is not null)
-            await _hotKeysContext.DisposeAsync();
+    if (_module is not null)
+        await _module.DisposeAsync();
 
-        if (_module is not null)
-            await _module.DisposeAsync();
-
-        selfRef?.Dispose();
-    }
+    selfRef?.Dispose();
+}
 }

@@ -9,22 +9,37 @@
 
     #settingsWrapper ::deep .settings-btn {
         border-radius: 50%;
+        box-shadow: var(--bit-shd-2);
+        transition: all 0.2s ease;
     }
 
+        #settingsWrapper ::deep .settings-btn:hover {
+            transform: rotate(20deg);
+        }
 
 .settingsMenu {
-    display: none;
     min-width: 220px;
     position: absolute;
     bottom: 44px;
     left: 0;
     opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 1000;
+    transform: translateY(-10px);
+    pointer-events: none;
+    transition: all 0.2s ease;
+    box-shadow: var(--bit-shd-4);
+    overflow: hidden;
 }
 
     .settingsMenu.show {
-        display: block;
         opacity: 1;
         transform: translateY(0);
+        pointer-events: all;
     }
+
+::deep .submenu-btn {
+    border-radius: 0;
+    text-align: start;
+    justify-content: space-between;
+    transition: background-color 0.15s ease;
+}

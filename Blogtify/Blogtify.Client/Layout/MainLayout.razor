@@ -14,36 +14,38 @@
           content="Code Magic là không gian chuyên sâu lưu trữ và trao đổi kiến thức về phát triển phần mềm, lập trình điện tử, toán học và vật lý. Khám phá hành trình biến khoa học thành công cụ giải quyết vấn đề phức tạp." />
 </HeadContent>
 
-<AppBar OnToggleDrawer="@ToggleDrawer" />
+<BitThemeProvider Theme="@myTheme">
+    <AppBar OnToggleDrawer="@ToggleDrawer" />
 
-<!-- Sidebar Desktop -->
-<aside class="sidebar desktop">
-    <BitNav Items="@sidebarItems" AriaLabel="Menu bên"
-            DefaultSelectedItem="@sidebarItems[0]"
-            AllExpanded Mode="BitNavMode.Automatic" Style="width: 230px"
-            Match="BitNavMatch.Prefix" SelectedItem="@selectedItem"
-            OnItemClick="(BitNavItem item) => OnSelectedItemChanged(item)" />
-</aside>
-
-<!-- Sidebar Mobile (Drawer) -->
-<div class="sidebar">
-    <BitPanel @bind-IsOpen="isDrawerOpen" AriaLabel="Menu bên"
-              Position="BitPanelPosition.Start">
-        <BitNav Items="@sidebarItems" DefaultSelectedItem="@sidebarItems[0]"
+    <!-- Sidebar Desktop -->
+    <aside class="sidebar desktop">
+        <BitNav Items="@sidebarItems" AriaLabel="Menu bên"
+                DefaultSelectedItem="@sidebarItems[0]"
                 AllExpanded Mode="BitNavMode.Automatic" Style="width: 230px"
                 Match="BitNavMatch.Prefix" SelectedItem="@selectedItem"
                 OnItemClick="(BitNavItem item) => OnSelectedItemChanged(item)" />
-    </BitPanel>
-</div>
-<main class="main-content">
-    @Body
-</main>
+    </aside>
 
-<Footer />
+    <!-- Sidebar Mobile (Drawer) -->
+    <div class="sidebar">
+        <BitPanel @bind-IsOpen="isDrawerOpen" AriaLabel="Menu bên"
+                  Position="BitPanelPosition.Start">
+            <BitNav Items="@sidebarItems" DefaultSelectedItem="@sidebarItems[0]"
+                    AllExpanded Mode="BitNavMode.Automatic" Style="width: 230px"
+                    Match="BitNavMatch.Prefix" SelectedItem="@selectedItem"
+                    OnItemClick="(BitNavItem item) => OnSelectedItemChanged(item)" />
+        </BitPanel>
+    </div>
+    <main class="main-content">
+        @Body
+    </main>
+
+    <Footer />
 
 
-<SettingsButton />
-<BackToTopButton />
+    <SettingsButton />
+    <BackToTopButton />
+</BitThemeProvider>
 
 @code {
     private List<BitNavItem> sidebarItems = new();
@@ -135,4 +137,178 @@
             NavigationManager.LocationChanged += (sender, args) => UpdateSelectedItem();
         }
     }
+
+    BitTheme myTheme = new()
+    {
+        Color = new()
+        {
+            Primary = new()
+            {
+                Main = "#1793D1", // Arch blue cyan
+                MainHover = "#4DA8E0",
+                MainActive = "#0F6D9F",
+                Light = "#1E3A5C", // Dark blue background
+                LightHover = "#2A4A75",
+                LightActive = "#35598E",
+                Dark = "#0D5A7A",
+                DarkHover = "#0A475F",
+                DarkActive = "#073445",
+                Text = "#FFFFFF"
+            },
+            Secondary = new()
+            {
+                Main = "#718096", // Medium gray
+                MainHover = "#8A9CB0",
+                MainActive = "#5A677A",
+                Light = "#2D3748", // Dark gray background
+                LightHover = "#3A4558",
+                LightActive = "#475266",
+                Dark = "#1A202C",
+                DarkHover = "#0F1419",
+                DarkActive = "#050709",
+                Text = "#FFFFFF"
+            },
+            Success = new()
+            {
+                Main = "#48BB78", // Green
+                MainHover = "#68CB98",
+                MainActive = "#38A169",
+                Light = "#22543D", // Dark green background
+                LightHover = "#2D6548",
+                LightActive = "#387653",
+                Dark = "#1C4532",
+                DarkHover = "#153A25",
+                DarkActive = "#0E2A18",
+                Text = "#FFFFFF"
+            },
+            Warning = new()
+            {
+                Main = "#ED8936", // Orange
+                MainHover = "#F1A366",
+                MainActive = "#E17A27",
+                Light = "#744210", // Dark orange background
+                LightHover = "#8F5520",
+                LightActive = "#AA6830",
+                Dark = "#5C350D",
+                DarkHover = "#442809",
+                DarkActive = "#2C1B05",
+                Text = "#FFFFFF"
+            },
+            Error = new()
+            {
+                Main = "#F56565", // Red
+                MainHover = "#F88585",
+                MainActive = "#E53E3E",
+                Light = "#742A2A", // Dark red background
+                LightHover = "#8F3A3A",
+                LightActive = "#AA4A4A",
+                Dark = "#5C2222",
+                DarkHover = "#441A1A",
+                DarkActive = "#2C1212",
+                Text = "#FFFFFF"
+            },
+            Info = new()
+            {
+                Main = "#4299E1", // Blue
+                MainHover = "#62B9F1",
+                MainActive = "#3182CE",
+                Light = "#1E4A7A", // Dark blue background
+                LightHover = "#2A5A8A",
+                LightActive = "#366A9A",
+                Dark = "#163A6A",
+                DarkHover = "#0E2A5A",
+                DarkActive = "#061A4A",
+                Text = "#FFFFFF"
+            },
+            Neutral = new()
+            {
+                Black = "#000000",
+                White = "#FFFFFF",
+                Gray10 = "#0F1419", // Darkest
+                Gray20 = "#1A202C",
+                Gray30 = "#2D3748",
+                Gray40 = "#4A5568",
+                Gray50 = "#718096",
+                Gray60 = "#A0AEC0",
+                Gray70 = "#CBD5E0",
+                Gray80 = "#E2E8F0",
+                Gray90 = "#EDF2F7",
+                Gray100 = "#F7FAFC"  // Lightest
+            },
+            Background = new()
+            {
+                Primary = "#0F1419",   // Dark background
+                PrimaryHover = "#1A202C",
+                PrimaryActive = "#252A35",
+                Secondary = "#1A202C",  // Slightly lighter dark
+                SecondaryHover = "#252B37",
+                SecondaryActive = "#303642",
+                Tertiary = "#2D3748",   // Medium dark
+                TertiaryHover = "#384252",
+                TertiaryActive = "#434D5C",
+                Overlay = "#00000099",  // Dark overlay
+                Disabled = "#2A303C"
+            },
+            Foreground = new()
+            {
+                Primary = "#F7FAFC",    // Light text on dark
+                PrimaryHover = "#FFFFFF",
+                PrimaryActive = "#EDF2F7",
+                Secondary = "#E2E8F0",  // Slightly dimmer text
+                SecondaryHover = "#F7FAFC",
+                SecondaryActive = "#CBD5E0",
+                Tertiary = "#A0AEC0",   // Disabled/placeholder text
+                TertiaryHover = "#CBD5E0",
+                TertiaryActive = "#718096",
+                Disabled = "#718096"
+            },
+            Border = new()
+            {
+                Primary = "#2D3748",    // Dark borders
+                PrimaryHover = "#4A5568",
+                PrimaryActive = "#718096",
+                Secondary = "#4A5568",
+                SecondaryHover = "#718096",
+                SecondaryActive = "#A0AEC0",
+                Tertiary = "#718096",
+                TertiaryHover = "#A0AEC0",
+                TertiaryActive = "#CBD5E0",
+                Disabled = "#2D3748"
+            }
+        },
+        Typography = new()
+        {
+            FontWeight = "400",
+            GutterSize = "0.75rem",
+            LineHeight = "1.5"
+        },
+        BoxShadow = new()
+        {
+            Callout = "0 0 0 1px #1793D1, 0 4px 12px rgba(0, 0, 0, 0.5)",
+            S1 = "0 1px 3px rgba(0, 0, 0, 0.3)",
+            S2 = "0 2px 6px rgba(0, 0, 0, 0.4)",
+            S3 = "0 4px 12px rgba(0, 0, 0, 0.5)",
+            S4 = "0 8px 24px rgba(0, 0, 0, 0.6)",
+            S5 = "0 0 0 1px #1793D1, 0 8px 24px rgba(0, 0, 0, 0.7)"
+        },
+        ZIndex = new()
+        {
+            Base = "0",
+            Callout = "1000",
+            Modal = "2000",
+            Overlay = "3000",
+            Snackbar = "4000"
+        },
+        Shape = new()
+        {
+            BorderRadius = "0.375rem",
+            BorderStyle = "solid",
+            BorderWidth = "1px"
+        },
+        Spacing = new()
+        {
+            ScalingFactor = "0.5rem"
+        }
+    };
+
 }

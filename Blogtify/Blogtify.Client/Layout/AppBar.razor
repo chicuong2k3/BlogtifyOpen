@@ -5,7 +5,7 @@
 @inject BitThemeManager BitThemeManager
 @inject IJSRuntime JSRuntime
 
-<div class="appbar" style="background-color: var(@BitCss.Var.Color.Background.Secondary)">
+<div class="appbar" style="var(@(IsDark? BitCss.Var.Color.Tertiary.Dark : BitCss.Var.Color.Tertiary.Light))">
     <BitStack Horizontal VerticalAlign="BitAlignment.Center">
         <div>
             <BitButton OnClick="OnToggleDrawer" AriaLabel="Bật tắt menu"
@@ -23,7 +23,7 @@
     </BitStack>
     <BitStack Horizontal HorizontalAlign="BitAlignment.End" Style="width: 100%; gap: 0.5rem;">
         <BitSearchBox Placeholder="Tìm kiếm bài viết..."
-                      MinSuggestTriggerChars="1"
+                      MinSuggestTriggerChars="1" Color="BitColor.Info"
                       SuggestItemsProvider="ProvideSuggestions"
                       Modeless ThrottleTime="0"
                       SuggestItemTemplate="@RenderSuggestion"
