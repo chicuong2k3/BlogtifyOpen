@@ -41,8 +41,6 @@ public class AppDataManager
     }
 
     public async Task<List<ContentDto>> GetContentsAsync(
-        int page,
-        int pageSize,
         string query,
         List<string> categories,
         string sortDirection)
@@ -77,8 +75,6 @@ public class AppDataManager
 
         return result
             .OrderByDescending(p => p.Id)
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
             .ToList();
     }
 

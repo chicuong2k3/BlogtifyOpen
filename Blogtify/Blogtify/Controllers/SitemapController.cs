@@ -22,17 +22,7 @@ public class SitemapController : ControllerBase
         var request = HttpContext.Request;
         var baseUri = $"{request.Scheme}://{request.Host.Value}";
 
-        List<ContentDto> contents = [];
-        List<ContentDto> temp = [];
-        int page = 1;
-        do
-        {
-            temp = await _appDataManager.GetContentsAsync(page, 50, string.Empty, [], "desc");
-            contents.AddRange(temp);
-            page++;
-        } while (temp.Any());
-
-
+        List<ContentDto> contents = await _appDataManager.GetContentsAsync(string.Empty, [], "desc");
 
         var sb = new StringBuilder();
         sb.AppendLine(@"<?xml version=""1.0"" encoding=""UTF-8""?>");

@@ -78,8 +78,8 @@
         if (string.IsNullOrWhiteSpace(request.SearchTerm))
             return Array.Empty<string>();
 
-        var results = await AppDataManager.GetContentsAsync(1, Constants.SearchPageSize, request.SearchTerm, [], "desc");
-        return results.Select(r => r.Title).ToList();
+        var results = await AppDataManager.GetContentsAsync(request.SearchTerm, [], "desc");
+        return results.Take(Constants.SearchPageSize).Select(r => r.Title).ToList();
     }
 
     private void OnSearchTriggered(string? text)
