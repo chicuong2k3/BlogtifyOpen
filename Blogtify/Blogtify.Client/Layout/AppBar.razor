@@ -6,39 +6,55 @@
 @inject IJSRuntime JSRuntime
 
 <div class="appbar" style="background-color: var(@BitCss.Var.Color.Background.Secondary)">
-    <div class="logo">
-        <a href="/">
-            <img src="logo.png" alt="CodeMagic" width="56" height="56" />
-        </a>
-    </div>
-
-    <BitStack Horizontal HorizontalAlign="BitAlignment.End">
-        <div class="search-container">
-            <BitSearchBox Placeholder="Tìm kiếm bài viết..."
-                          MinSuggestTriggerChars="1"
-                          SuggestItemsProvider="ProvideSuggestions"
-                          SuggestItemTemplate="@RenderSuggestion"
-                          DebounceTime="0" Immediate FixedIcon="true"
-                          OnSearch="OnSearchTriggered"
-                          MaxSuggestCount="5"
-                          Background="BitColorKind.Primary"
-                          Style="width:100%; max-width:400px;" />
+    <BitStack Horizontal VerticalAlign="BitAlignment.Center">
+        <div>
+            <BitButton OnClick="OnToggleDrawer" AriaLabel="Bật tắt menu"
+                       IconName="@BitIconName.ContextMenu"
+                       Color="BitColor.Primary"
+                       Class="toggle-menu-btn" />
         </div>
+
+        <div class="logo">
+            <a href="/" style="outline: none; border: none" tabindex="-1">
+                <img src="logo.png" alt="CodeMagic" width="56" height="56" />
+            </a>
+        </div>
+
+    </BitStack>
+    <BitStack Horizontal HorizontalAlign="BitAlignment.End" Style="width: 100%; gap: 0.5rem;">
+        <BitSearchBox Placeholder="Tìm kiếm bài viết..."
+                      MinSuggestTriggerChars="1"
+                      SuggestItemsProvider="ProvideSuggestions"
+                      Modeless ThrottleTime="0"
+                      SuggestItemTemplate="@RenderSuggestion"
+                      DebounceTime="0" Immediate FixedIcon="true" NoBorder
+                      OnSearch="OnSearchTriggered"
+                      MaxSuggestCount="5"
+                      Background="BitColorKind.Primary"
+                      Style="flex: 1;" />
+
         <BitToggleButton OnIconName="@BitIconName.HazyDay" IsChecked="@(!IsDark)"
                          OffIconName="@BitIconName.HazyNight"
                          IconOnly AriaLabel="Dark Mode" Variant="BitVariant.Outline"
-                         OnClick="ChangeTheme" />
+                         OnClick="ChangeTheme"
+                         Style="flex-shrink: 0;" />
     </BitStack>
+
 </div>
 
 @code {
     private bool IsDark = false;
 
-    private RenderFragment<string> RenderSuggestion => (item) => @<div class="search-item">
-    <BitIcon IconName="@BitIconName.BookAnswers" Class="search-icon" />
-    <span style="margin-left: 8px">@item</span>
-</div>
+    private RenderFragment<string> RenderSuggestion => (item)
+        => @<BitStack FillContent
+                      Horizontal Style="padding: 0.5rem; font-size: 0.9rem;">
+    <BitIcon IconName="@BitIconName.BookAnswers" Color="BitColor.Secondary" Style="margin-right: 8px;" />
+    <BitText Typography="BitTypography.Subtitle1" Color="BitColor.Secondary">@item</BitText>
+</BitStack>
     ;
+
+    [Parameter]
+    public EventCallback OnToggleDrawer { get; set; }
 
     private IJSObjectReference? _module;
 

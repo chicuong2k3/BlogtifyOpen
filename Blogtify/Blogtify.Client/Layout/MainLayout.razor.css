@@ -1,12 +1,4 @@
 ﻿
-::deep .toggle-menu-btn {
-    position: fixed;
-    bottom: 100px;
-    right: 40px;
-    z-index: 90;
-    border-radius: 50%;
-}
-
 .sidebar {
     margin: calc(60.667px + 1rem) 0 0 0;
     z-index: 1000;
@@ -42,10 +34,6 @@ main.main-content {
 /* Hide on desktop */
 @media (min-width: 993px) {
     .menu-toggle {
-        display: none !important;
-    }
-
-    ::deep .toggle-menu-btn {
         display: none !important;
     }
 }

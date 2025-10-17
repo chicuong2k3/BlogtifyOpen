@@ -30,7 +30,7 @@
             <BitText Typography="BitTypography.Subtitle1" Style="font-weight: 600">Không có kết quả nào.</BitText>
         }
 
-        @if (_hasMore && !_isLoading)
+        @if (_hasMore)
         {
             <BitStack Alignment="BitAlignment.Center">
                 <BitButton OnClick="LoadMore"

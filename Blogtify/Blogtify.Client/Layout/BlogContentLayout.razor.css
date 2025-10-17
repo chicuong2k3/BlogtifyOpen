@@ -4,7 +4,6 @@
 }
 
 ::deep.content {
-    width: 100%;
     margin: 0 auto;
     padding: 1rem;
     overflow-wrap: break-word;
@@ -64,4 +63,52 @@
     position: fixed;
     bottom: 0;
     left: 0;
+}
+
+
+/* Code Block */
+
+::deep .code-block-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: visible;
+    box-sizing: border-box;
+}
+
+::deep pre[class*="language-"],
+::deep pre {
+    width: 100%;
+    max-width: 100%;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    overflow-x: hidden !important;
+    border-radius: 8px;
+    box-sizing: border-box;
+    padding: 8px 12px;
+    margin: 0;
+}
+
+
+
+::deep code {
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    display: block;
+    width: 100%;
+}
+
+::deep .copy-code-btn {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    z-index: 10 !important;
+    border: none !important;
+    border-top-left-radius: 5px !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 8px !important;
+    border-top-right-radius: 0 !important;
 }

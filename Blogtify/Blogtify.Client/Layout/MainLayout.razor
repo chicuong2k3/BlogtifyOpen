@@ -14,7 +14,7 @@
           content="Code Magic là không gian chuyên sâu lưu trữ và trao đổi kiến thức về phát triển phần mềm, lập trình điện tử, toán học và vật lý. Khám phá hành trình biến khoa học thành công cụ giải quyết vấn đề phức tạp." />
 </HeadContent>
 
-<AppBar />
+<AppBar OnToggleDrawer="@ToggleDrawer" />
 
 <!-- Sidebar Desktop -->
 <aside class="sidebar desktop">
@@ -41,12 +41,7 @@
 
 <Footer />
 
-<div>
-    <BitButton OnClick="ToggleDrawer" AriaLabel="Bật tắt menu"
-               IconName="@BitIconName.ContextMenu"
-               Color="BitColor.Primary" Size="BitSize.Large"
-               Class="toggle-menu-btn" />
-</div>
+
 <SettingsButton />
 <BackToTopButton />
 
@@ -112,7 +107,7 @@
         StateHasChanged();
     }
 
-    private BitNavItem? FindMatchingItem(List<BitNavItem> items, string currentPath)
+    private BitNavItem FindMatchingItem(List<BitNavItem> items, string currentPath)
     {
         foreach (var item in items)
         {
@@ -130,7 +125,7 @@
                 }
             }
         }
-        return null;
+        return new();
     }
 
     protected override void OnAfterRender(bool firstRender)
