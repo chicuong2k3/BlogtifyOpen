@@ -75,6 +75,7 @@
     overflow-x: hidden;
     overflow-y: visible;
     box-sizing: border-box;
+    margin: 8px 0;
 }
 
 ::deep pre[class*="language-"],
@@ -111,4 +112,37 @@
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 8px !important;
     border-top-right-radius: 0 !important;
+}
+
+
+
+/* MathJax */
+::deep .math,
+::deep mjx-container {
+    display: block;
+    max-width: 100% !important;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: normal !important;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+::deep mjx-math {
+    display: inline-block;
+    max-width: 100%;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+}
+
+::deep mjx-assistive-mml {
+    display: none !important;
+}
+
+::deep mjx-container[display="true"] {
+    overflow-x: auto !important;
+    overflow-y: hidden;
+    text-align: center;
 }
