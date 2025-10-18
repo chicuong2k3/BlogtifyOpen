@@ -92,15 +92,21 @@
     margin: 0;
 }
 
-
-
 ::deep code {
     white-space: pre-wrap !important;
-    word-wrap: break-word !important;
     word-break: break-word !important;
-    display: block;
-    width: 100%;
+    overflow-x: auto;
 }
+
+::deep :not(pre) > code {
+    color: var(--bit-clr-pri);
+    font-style: italic;
+}
+
+    ::deep :not(pre) > code:hover {
+        color: var(--bit-clr-pri-hover);
+    }
+
 
 ::deep .copy-code-btn {
     position: absolute;

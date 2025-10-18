@@ -3,7 +3,6 @@
 @inject NavigationManager NavigationManager
 @inject AppDataManager AppDataManager
 @inject BitThemeManager BitThemeManager
-@inject IJSRuntime JSRuntime
 
 <div class="appbar" style="var(@(IsDark? BitCss.Var.Color.Tertiary.Dark : BitCss.Var.Color.Tertiary.Light))">
     <BitStack Horizontal VerticalAlign="BitAlignment.Center">
@@ -36,7 +35,7 @@
         <BitToggleButton OnIconName="@BitIconName.HazyDay" IsChecked="@(!IsDark)"
                          OffIconName="@BitIconName.HazyNight"
                          IconOnly AriaLabel="Dark Mode" Variant="BitVariant.Outline"
-                         OnClick="ChangeTheme"
+                         OnClick="@OnToggleTheme"
                          Style="flex-shrink: 0;" />
     </BitStack>
 
@@ -56,7 +55,8 @@
     [Parameter]
     public EventCallback OnToggleDrawer { get; set; }
 
-    private IJSObjectReference? _module;
+    [Parameter]
+    public EventCallback OnToggleTheme { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -64,14 +64,6 @@
         IsDark = currentTheme == "dark";
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (!firstRender) return;
-
-        _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "/Layout/AppBar.razor.js");
-        await _module.InvokeVoidAsync("updateCodeBlock", IsDark);
-        StateHasChanged();
-    }
 
     private async ValueTask<IEnumerable<string>> ProvideSuggestions(BitSearchBoxSuggestItemsProviderRequest request)
     {
@@ -86,15 +78,5 @@
     {
         if (string.IsNullOrWhiteSpace(text)) return;
         NavigationManager.NavigateTo($"?Query={text}&Page=1");
-    }
-
-    private async Task ChangeTheme()
-    {
-        await BitThemeManager.ToggleDarkLightAsync();
-        var currentTheme = await BitThemeManager.GetCurrentThemeAsync();
-        IsDark = currentTheme == "dark";
-
-        if (_module != null)
-            await _module.InvokeVoidAsync("updateCodeBlock", IsDark);
     }
 }

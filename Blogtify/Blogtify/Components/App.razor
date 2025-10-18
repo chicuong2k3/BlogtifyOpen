@@ -11,15 +11,17 @@
         (/iPad|iPhone|iPod/.test(navigator.userAgent)) &&
         (document.querySelector('meta[name="viewport"]').content = 'width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0')
     </script>
-
-    <link href="css/app.css" rel="stylesheet" />
     <link href="_content/Bit.BlazorUI/styles/bit.blazorui.css?v=@Bit.BlazorUI.Info.Version" rel="stylesheet" />
     <link href="_content/Bit.BlazorUI.Icons/styles/bit.blazorui.icons.css?v=@Bit.BlazorUI.Info.Version" rel="stylesheet" />
+
+
+    <link href="css/app.css" rel="stylesheet" />
     <link href="Blogtify.styles.css" rel="stylesheet" />
 
     <link href="css/prism.min.css" rel="stylesheet" />
     <link href="css/prism-coy-without-shadows.min.css" rel="stylesheet" id="code-block-stylesheet" />
     <link href="css/prism-show-language.min.css" rel="stylesheet" />
+
     <HeadOutlet @rendermode="InteractiveWebAssembly" />
 </head>
 
