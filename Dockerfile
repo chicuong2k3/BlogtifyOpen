@@ -1,12 +1,12 @@
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0.0-rc.2 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.0-rc.1 AS base
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
 USER $APP_UID
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0.100-rc.2 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0.100-rc.1 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
@@ -48,7 +48,7 @@ RUN dotnet publish "Blogtify.Client.csproj" -c ReleaseCompat -o /app/publishComp
 RUN mkdir -p /app/publish/wwwroot/_frameworkCompat && \
     cp -r /app/publishCompat/wwwroot/_framework/* /app/publish/wwwroot/_frameworkCompat/
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0.0-rc.2 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.0-rc.1 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
