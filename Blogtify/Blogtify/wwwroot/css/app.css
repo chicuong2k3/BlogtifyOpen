@@ -363,7 +363,7 @@
             :root[bit-theme="dark"],
             :root[bit-theme="fluent-dark"] {
                 /* MAIN */
-                --bit-tpg-font-family: "Inter", system-ui, -apple-system, sans-serif;
+                --bit-tpg-font-family: "Be VietNam Pro", system-ui, -apple-system, sans-serif;
                 --bit-tpg-font-weight: 400;
                 --bit-tpg-line-height: 1.5;
                 --bit-tpg-gutter-size: 0.35em;
