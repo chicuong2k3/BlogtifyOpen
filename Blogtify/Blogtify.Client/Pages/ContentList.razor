@@ -2,7 +2,6 @@
 
 @inject NavigationManager NavigationManager
 @inject AppDataManager AppDataManager
-@inject PersistentComponentState State
 
 <BitCard NoShadow FullWidth Background="BitColorKind.Transparent">
 
@@ -19,10 +18,10 @@
         <BitShimmer Loaded="@(!_isLoading)"
                     Background="BitColor.Success" AriaLabel="Loading content" Height="1rem">
 
-            @if (_contents.Any())
+            @if (Contents is not null && Contents.Any())
             {
                 <BitStack Gap="8px">
-                    @foreach (var content in _contents.Take(_currentPage * Constants.PageSize))
+                    @foreach (var content in Contents.Take(_currentPage * Constants.PageSize))
                     {
                         <ContentCard Content="@content" @key="@content.GetHashCode()" />
                     }
@@ -52,7 +51,8 @@
 </BitCard>
 
 @code {
-    private List<ContentDto> _contents = new();
+    [PersistentState]
+    public List<ContentDto>? Contents { get; set; }
     private List<BitDropdownItem<string>> _sortFilters = new()
     {
         new() { Text = "Mới nhất", Value = "desc" },
@@ -61,17 +61,17 @@
 
     private int _currentPage = 1;
     private string _selectedSortValue = "desc";
-    private int _totalContent;
     private bool _isLoading = true;
-    private bool _hasMore => _currentPage * Constants.PageSize < _contents.Count();
-
-    private PersistingComponentStateSubscription? persistingSubscription;
+    private bool _hasMore => _currentPage * Constants.PageSize < Contents?.Count();
 
     [SupplyParameterFromQuery]
     public string Query { get; set; } = string.Empty;
 
     [SupplyParameterFromQuery(Name = "categories")]
     public string[] Categories { get; set; } = Array.Empty<string>();
+
+    private string? _prevQuery;
+    private string[]? _prevCategories;
 
     protected override async Task OnParametersSetAsync()
     {
@@ -82,20 +82,10 @@
     {
         _isLoading = true;
 
-        persistingSubscription = State.RegisterOnPersisting(() =>
-        {
-            State.PersistAsJson("contents", _contents);
-            return Task.CompletedTask;
-        });
-
-        if (!State.TryTakeFromJson<List<ContentDto>>("contents", out var restored))
-        {
-            _contents = await AppDataManager.GetContentsAsync(Query ?? string.Empty, Categories.ToList(), _selectedSortValue);
-        }
-        else
-        {
-            _contents = restored ?? new();
-        }
+        Contents = await AppDataManager.GetContentsAsync(Query ?? string.Empty, Categories.ToList());
+        Contents = Contents
+            .OrderByDescending(c => c.LastModified ?? DateTime.MinValue)
+            .ToList();
 
         _isLoading = false;
     }
@@ -112,8 +102,16 @@
         {
             _selectedSortValue = value;
             _currentPage = 1;
-            _contents.Clear();
-            await LoadPosts();
+            Contents = _selectedSortValue?.ToLowerInvariant() switch
+            {
+                "asc" => Contents
+                    ?.OrderBy(p => p.LastModified ?? DateTime.MinValue)
+                    .ToList(),
+                "desc" => Contents
+                    ?.OrderByDescending(p => p.LastModified ?? DateTime.MinValue)
+                    .ToList(),
+                _ => Contents?.OrderBy(p => p.LastModified ?? DateTime.MinValue).ToList()
+            };
         }
     }
 }

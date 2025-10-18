@@ -15,6 +15,7 @@
           content="Code Magic là không gian chuyên sâu lưu trữ và trao đổi kiến thức về phát triển phần mềm, lập trình điện tử, toán học và vật lý. Khám phá hành trình biến khoa học thành công cụ giải quyết vấn đề phức tạp." />
 </HeadContent>
 
+<CascadingValue Value="@IsDark">
 <BitThemeProvider>
     <AppBar OnToggleDrawer="@ToggleDrawer" OnToggleTheme="@ToggleTheme" />
 
@@ -47,11 +48,14 @@
     <SettingsButton />
     <BackToTopButton />
 </BitThemeProvider>
+</CascadingValue>
 
 @code {
     private List<BitNavItem> sidebarItems = new();
     private bool isDrawerOpen;
     private BitNavItem selectedItem = new();
+
+    private bool IsDark = false;
 
     private IJSObjectReference? _module;
 
@@ -80,6 +84,12 @@
         ];
 
         UpdateSelectedItem();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var currentTheme = await BitThemeManager.GetCurrentThemeAsync();
+        IsDark = currentTheme?.Contains("dark") ?? false;
     }
 
     private BitNavItem BuildSidebarItem(string category) => new()
@@ -139,20 +149,13 @@
         if (!firstRender) return;
 
         NavigationManager.LocationChanged += (sender, args) => UpdateSelectedItem();
-
-        _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "/Layout/MainLayout.razor.js");
-        await _module.InvokeVoidAsync("updateCodeBlock", IsDark);
         StateHasChanged();
     }
 
-
-    private bool IsDark = false;
     private async Task ToggleTheme()
     {
         await BitThemeManager.ToggleDarkLightAsync();
         var currentTheme = await BitThemeManager.GetCurrentThemeAsync();
         IsDark = currentTheme.Contains("dark");
-        if (_module != null)
-            await _module.InvokeVoidAsync("updateCodeBlock", IsDark);
     }
 }

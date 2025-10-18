@@ -9,33 +9,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup .NET
+      - name: Setup .NET 10 RC2
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.100-rc.2.25502.107'
 
-      - name: Install wasm-tools
+      - name: Verify .NET version
+        run: dotnet --info
+
+      - name: Install wasm-tools workload
         run: dotnet workload install wasm-tools
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore Blogtify.sln
 
       - name: Build solution
         run: dotnet build Blogtify.sln --configuration Release --no-restore
 
-      - name: Publish Server (with default client build)
-        run: dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ./publish
+      - name: Publish Server
+        run: dotnet publish Blogtify/Blogtify/Blogtify.csproj -c Release -o ./publish --no-restore /p:UseAppHost=false
 
-      - name: Publish Client ReleaseCompat
+      - name: Publish Client (ReleaseCompat)
         run: dotnet publish Blogtify/Blogtify.Client/Blogtify.Client.csproj -c ReleaseCompat -o ./publishCompat --no-restore
 
-
       - name: Copy compat framework
-        run: cp -r ./publishCompat/wwwroot/_framework ./publish/wwwroot/_frameworkCompat
+        run: |
+          mkdir -p ./publish/wwwroot/_frameworkCompat
+          cp -r ./publishCompat/wwwroot/_framework/* ./publish/wwwroot/_frameworkCompat/
 
-      # Trigger Render Deploy
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: blogtify-publish
+          path: ./publish
+
       - name: Trigger Render Deploy Hook
-        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+        if: success()
+        env:
+          DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          echo "Triggering Render deployment..."
+          curl -X POST "$DEPLOY_HOOK"

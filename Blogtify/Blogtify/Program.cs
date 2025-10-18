@@ -98,7 +98,7 @@ app.UseHttpsRedirection();
 app.UseCors();
 
 app.UseResponseCompression();
-app.UseStaticFiles();
+app.MapStaticAssets();
 
 // Enable the .dat file extension (required to serve icudt.dat from _frameworkCompat/
 var provider = new FileExtensionContentTypeProvider();

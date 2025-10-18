@@ -6,25 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
 
+    <link href="@Assets["css/fonts.css"]" rel="stylesheet" />
     <script>
         // disable auto-zoom of iOS Safari when focusing an input
         (/iPad|iPhone|iPod/.test(navigator.userAgent)) &&
         (document.querySelector('meta[name="viewport"]').content = 'width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0')
     </script>
-    <link href="_content/Bit.BlazorUI/styles/bit.blazorui.css?v=@Bit.BlazorUI.Info.Version" rel="stylesheet" />
-    <link href="_content/Bit.BlazorUI.Icons/styles/bit.blazorui.icons.css?v=@Bit.BlazorUI.Info.Version" rel="stylesheet" />
+    <link href="@Assets["_content/Bit.BlazorUI/styles/bit.blazorui.css"]" rel="stylesheet" />
+    <link href="@Assets["_content/Bit.BlazorUI.Icons/styles/bit.blazorui.icons.css"]" rel="stylesheet" />
 
 
-    <link href="css/app.css" rel="stylesheet" />
-    <link href="Blogtify.styles.css" rel="stylesheet" />
+    <link href="@Assets["css/app.css"]" rel="stylesheet" />
+    <link href="@Assets["Blogtify.styles.css"]" rel="stylesheet" />
 
-    <link href="css/prism.min.css" rel="stylesheet" />
-    <link href="css/prism-coy-without-shadows.min.css" rel="stylesheet" id="code-block-stylesheet" />
-    <link href="css/prism-show-language.min.css" rel="stylesheet" />
+    <link href="@Assets["css/prism.min.css"]" rel="stylesheet" />
+    <link href="@Assets["css/prism-coy-without-shadows.min.css"]" rel="stylesheet" id="code-block-stylesheet" />
+    <link href="@Assets["css/prism-show-language.min.css"]" rel="stylesheet" />
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
     <HeadOutlet @rendermode="InteractiveWebAssembly" />
 </head>
@@ -86,26 +84,26 @@
         })();
     </script>
 
-    <script src="_content/Bit.BlazorUI/scripts/bit.blazorui.js?v=@Bit.BlazorUI.Info.Version"></script>
+    <script src="@Assets["_content/Bit.BlazorUI/scripts/bit.blazorui.js"]"></script>
 
-    <script src="js/theme.js" defer></script>
-    <script src="js/app.js" defer></script>
+    <script src="@Assets["js/theme.js"]" defer></script>
+    <script src="@Assets["js/app.js"]" defer></script>
 
-    <script src="js/code-block.js" defer></script>
-    <script src="js/prism-core.min.js" defer></script>
-    <script src="js/prism-autoloader.min.js" defer></script>
-    <script src="js/prism-clike.min.js" defer></script>
-    <script src="js/prism-markup.min.js" defer></script>
-    <script src="js/prism-csharp.min.js" defer></script>
-    <script src="js/prism-yaml.min.js" defer></script>
-    <script src="js/prism-javascript.min.js" defer></script>
-    <script src="js/prism-typescript.min.js" defer></script>
-    <script src="js/prism-css.min.js" defer></script>
-    <script src="js/prism-bash.min.js" defer></script>
-    <script src="js/prism-python.min.js" defer></script>
-    <script src="js/prism-sql.min.js" defer></script>
-    <script src="js/prism-http.min.js" defer></script>
-    <script src="js/prism-show-language.min.js" defer></script>
+    <script src="@Assets["js/code-block.js"]" defer></script>
+    <script src="@Assets["js/prism-core.min.js"]" defer></script>
+    <script src="@Assets["js/prism-autoloader.min.js"]" defer></script>
+    <script src="@Assets["js/prism-clike.min.js"]" defer></script>
+    <script src="@Assets["js/prism-markup.min.js"]" defer></script>
+    <script src="@Assets["js/prism-csharp.min.js"]" defer></script>
+    <script src="@Assets["js/prism-yaml.min.js"]" defer></script>
+    <script src="@Assets["js/prism-javascript.min.js"]" defer></script>
+    <script src="@Assets["js/prism-typescript.min.js"]" defer></script>
+    <script src="@Assets["js/prism-css.min.js"]" defer></script>
+    <script src="@Assets["js/prism-bash.min.js"]" defer></script>
+    <script src="@Assets["js/prism-python.min.js"]" defer></script>
+    <script src="@Assets["js/prism-sql.min.js"]" defer></script>
+    <script src="@Assets["js/prism-http.min.js"]" defer></script>
+    <script src="@Assets["js/prism-show-language.min.js"]" defer></script>
 
     <!-- Adsense: Lazy load after onload to reduce third-party block -->
     <script>

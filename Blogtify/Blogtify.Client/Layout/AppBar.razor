@@ -70,7 +70,7 @@
         if (string.IsNullOrWhiteSpace(request.SearchTerm))
             return Array.Empty<string>();
 
-        var results = await AppDataManager.GetContentsAsync(request.SearchTerm, [], "desc");
+        var results = await AppDataManager.GetContentsAsync(request.SearchTerm, []);
         return results.Take(Constants.SearchPageSize).Select(r => r.Title).ToList();
     }
 
