@@ -87,7 +87,8 @@
         Text = category.ToUpperInvariant(),
         IconName = "Cafe",
         Url = $"/?categories={category}",
-        Title = category
+        Title = category,
+        AriaLabel = category
     };
 
     private void ToggleDrawer() => isDrawerOpen = !isDrawerOpen;

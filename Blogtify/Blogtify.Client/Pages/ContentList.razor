@@ -16,30 +16,35 @@
             </BitDropdown>
         </BitStack>
 
-        @if (_contents.Any())
-        {
-            <BitStack Gap="8px">
-                @foreach (var content in _contents.Take(_currentPage * Constants.PageSize))
-                {
-                    <ContentCard Content="@content" @key="@content.GetHashCode()" />
-                }
-            </BitStack>
-        }
-        else
-        {
-            <BitText Typography="BitTypography.Subtitle1" Style="font-weight: 600">Không có kết quả nào.</BitText>
-        }
+        <BitShimmer Loaded="@(!_isLoading)"
+                    Background="BitColor.Success" AriaLabel="Loading content" Height="1rem">
 
-        @if (_hasMore)
-        {
-            <BitStack Alignment="BitAlignment.Center">
-                <BitButton OnClick="LoadMore"
-                           IsLoading="_isLoading"
-                           ButtonType="BitButtonType.Button">
-                    Tải thêm
-                </BitButton>
-            </BitStack>
-        }
+            @if (_contents.Any())
+            {
+                <BitStack Gap="8px">
+                    @foreach (var content in _contents.Take(_currentPage * Constants.PageSize))
+                    {
+                        <ContentCard Content="@content" @key="@content.GetHashCode()" />
+                    }
+                </BitStack>
+            }
+            else
+            {
+                <BitText Typography="BitTypography.Subtitle1" Style="font-weight: 600">Không có kết quả nào.</BitText>
+            }
+
+            @if (_hasMore)
+            {
+                <BitStack Alignment="BitAlignment.Center">
+                    <BitButton OnClick="LoadMore"
+                               IsLoading="_isLoading"
+                               ButtonType="BitButtonType.Button">
+                        Tải thêm
+                    </BitButton>
+                </BitStack>
+            }
+
+        </BitShimmer>
 
     </BitStack>
 
@@ -70,7 +75,6 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        _totalContent = await AppDataManager.GetTotalContentsAsync(Query ?? string.Empty, Categories.ToList());
         await LoadPosts();
     }
 
