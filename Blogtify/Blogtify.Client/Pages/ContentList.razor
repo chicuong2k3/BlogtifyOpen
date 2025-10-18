@@ -10,7 +10,7 @@
         <BitText Typography="BitTypography.H1">Các bài viết</BitText>
         <BitStack Alignment="BitAlignment.End">
             <BitDropdown Items="_sortFilters" TItem="BitDropdownItem<string>"
-                         TValue="string" AriaLabel="Sắp xếp theo"
+                         TValue="string" AriaLabel="Sắp xếp theo" Label="Sắp xếp theo"
                          @bind-Value="_selectedSortValue"
                          OnChange="OnSortChanged" FitWidth="true">
             </BitDropdown>
