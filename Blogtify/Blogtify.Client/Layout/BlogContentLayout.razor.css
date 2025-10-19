@@ -72,8 +72,8 @@
     position: relative;
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
-    overflow-y: visible;
+    overflow-x: auto !important;
+    overflow-y: hidden;
     box-sizing: border-box;
     margin: 8px 0;
 }
@@ -82,29 +82,31 @@
 ::deep pre {
     width: 100%;
     max-width: 100%;
-    white-space: pre-wrap !important;
+    white-space: pre !important;
+    overflow-wrap: anywhere !important;
     word-wrap: break-word !important;
     word-break: break-word !important;
-    overflow-x: hidden !important;
+    overflow-x: auto !important;
+    overflow-y: hidden;
     border-radius: 8px;
     box-sizing: border-box;
     padding: 8px 12px;
     margin: 0;
 }
 
-::deep code {
-    white-space: pre-wrap !important;
-    word-break: break-word !important;
-    overflow-x: auto;
-}
+    ::deep pre code,
+    ::deep pre[class*="language-"] code {
+        white-space: pre-wrap !important;
+        word-break: break-word !important;
+        overflow-wrap: anywhere !important;
+    }
 
 ::deep :not(pre) > code {
-    color: var(--bit-clr-pri);
-    font-style: italic;
+    color: var(--bit-clr-sec);
 }
 
     ::deep :not(pre) > code:hover {
-        color: var(--bit-clr-pri-hover);
+        color: var(--bit-clr-sec-hover);
     }
 
 
@@ -151,4 +153,15 @@
     overflow-x: auto !important;
     overflow-y: hidden;
     text-align: center;
+}
+
+::deep .mermaid {
+    display: flex;
+    justify-content: center;
+    max-width: 100%;
+    height: auto;
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
 }

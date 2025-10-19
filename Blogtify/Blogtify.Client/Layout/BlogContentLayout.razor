@@ -107,6 +107,8 @@
         await _module.InvokeVoidAsync("readingProgressInit", _dotNetRef, _contentRef);
         await _module.InvokeVoidAsync("renderMath", _contentRef);
 
+        await _module.InvokeVoidAsync("Render", "mermaid");
+
         // NavigationManager.LocationChanged += OnLocationChanged;
 
         StateHasChanged();

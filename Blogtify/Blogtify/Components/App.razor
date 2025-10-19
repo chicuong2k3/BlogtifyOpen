@@ -5,13 +5,33 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Security-Policy"
-          content="default-src 'self';
-               script-src 'self' 'unsafe-inline' 'unsafe-eval' https:;
-               style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-               font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net;
-               img-src 'self' data: https:;
-               connect-src 'self' https:;
-               frame-src https:;">
+          content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval'
+          https://cdn.jsdelivr.net
+          https://cdnjs.cloudflare.com
+          https://unpkg.com
+          https://pagead2.googlesyndication.com
+          https://www.googletagservices.com
+          https://googleads.g.doubleclick.net
+          https://ep2.adtrafficquality.google;
+        style-src 'self' 'unsafe-inline'
+          https://fonts.googleapis.com
+          https://cdn.jsdelivr.net;
+        font-src 'self'
+          https://fonts.gstatic.com
+          https://cdn.jsdelivr.net;
+        img-src 'self' data: https:;
+        connect-src 'self' https: http://localhost:* ws://localhost:*
+          https://pagead2.googlesyndication.com
+          https://googleads.g.doubleclick.net;
+        frame-src 'self'
+          https://*.google.com
+          https://*.googlesyndication.com
+          https://*.doubleclick.net
+          https://ep2.adtrafficquality.google;
+      ">
+
     <base href="/" />
 
     <link href="@Assets["css/fonts.css"]" rel="stylesheet" />
@@ -134,6 +154,15 @@
             });
         });
         document.querySelectorAll('.math-block').forEach(el => observer.observe(el));
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.min.js" defer></script>
+    <script defer>
+        window.addEventListener('DOMContentLoaded', () => {
+          if (window.mermaid) {
+            mermaid.initialize({ startOnLoad: true });
+          }
+        });
     </script>
 
 </body>

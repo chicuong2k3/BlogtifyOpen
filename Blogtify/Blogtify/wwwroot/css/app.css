@@ -511,8 +511,6 @@ h6, .bit-txt-h6 {
     font-size: var(--font-h6) !important;
 }
 
-
-
 * {
     box-sizing: border-box;
     font: inherit;
@@ -529,4 +527,13 @@ html, body {
     scroll-behavior: smooth;
     font-family: var(--font-base-family) !important;
     font-size: var(--font-base) !important;
+    overflow-x: hidden !important;
+}
+
+b, strong {
+    font-weight: bold !important;
+}
+
+em {
+    font-style: italic !important;
 }
