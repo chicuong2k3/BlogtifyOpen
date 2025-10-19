@@ -42,7 +42,7 @@ RUN dotnet publish "Blogtify.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:
 WORKDIR "/src/Blogtify/Blogtify.Client"
 
 # Publish client with compat build (fallback WASM mode)
-RUN dotnet publish "Blogtify.Client.csproj" -c ReleaseCompat -o /app/publishCompat --no-restore
+RUN dotnet publish "Blogtify.Client.csproj" -c ReleaseCompat -o /app/publishCompat --no-restore /p:WasmEnableLegacyJSInterop=true
 
 # Copy compat wasm runtime into server's wwwroot
 RUN mkdir -p /app/publish/wwwroot/_frameworkCompat && \
