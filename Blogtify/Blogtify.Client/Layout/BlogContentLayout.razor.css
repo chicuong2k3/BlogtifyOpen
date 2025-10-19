@@ -165,3 +165,17 @@
     word-wrap: break-word !important;
     word-break: break-word !important;
 }
+
+::deep blockquote {
+    padding: calc(var(--bit-spa-scaling-factor));
+    margin: calc(var(--bit-spa-scaling-factor) * 2) 0;
+    border-left: 4px solid var(--bit-clr-suc);
+    background-color: var(--bit-clr-suc-hover);
+    color: var(--bit-clr-suc-text);
+    font-style: italic;
+    border-radius: var(--bit-shp-brd-radius);
+}
+
+    ::deep blockquote:hover {
+        background-color: var(--bit-clr-suc);
+    }
