@@ -71,16 +71,32 @@
     [SupplyParameterFromQuery(Name = "categories")]
     public string[] Categories { get; set; } = Array.Empty<string>();
 
+    private string _prevQuery = string.Empty;
+    private string _prevCategoriesKey = string.Empty;
+
     protected override async Task OnInitializedAsync()
     {
         await LoadPosts();
     }
 
-    private async Task LoadPosts()
+    protected override async Task OnParametersSetAsync()
+    {
+        var currentCategoriesKey = string.Join(",", Categories ?? Array.Empty<string>());
+        if (_prevQuery != Query || _prevCategoriesKey != currentCategoriesKey)
+        {
+            _prevQuery = Query;
+            _prevCategoriesKey = currentCategoriesKey;
+
+            await LoadPosts(forceReload: true);
+        }
+    }
+
+
+    private async Task LoadPosts(bool forceReload = false)
     {
         _isLoading = true;
 
-        if (Contents == null)
+        if (Contents == null || forceReload)
         {
             Contents = await AppDataManager.GetContentsAsync(Query ?? string.Empty, Categories.ToList());
             Contents = Contents
