@@ -362,3 +362,4 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /Blogtify/Blogtify/AIModels/model_quantized.onnx
+.vercel

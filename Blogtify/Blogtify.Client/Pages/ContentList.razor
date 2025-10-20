@@ -38,7 +38,7 @@
                 <BitStack Alignment="BitAlignment.Center">
                     <BitButton OnClick="LoadMore"
                                IsLoading="_isLoading"
-                               ButtonType="BitButtonType.Button">
+                               ButtonType="BitButtonType.Button" Style="margin-top: 8px">
                         Tải thêm
                     </BitButton>
                 </BitStack>
@@ -52,7 +52,7 @@
 </BitCard>
 
 @code {
-    [PersistentState]
+    [PersistentState(AllowUpdates = true)]
     public List<ContentDto>? Contents { get; set; }
     private List<BitDropdownItem<string>> _sortFilters = new()
     {
@@ -71,10 +71,7 @@
     [SupplyParameterFromQuery(Name = "categories")]
     public string[] Categories { get; set; } = Array.Empty<string>();
 
-    private string? _prevQuery;
-    private string[]? _prevCategories;
-
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         await LoadPosts();
     }
@@ -83,10 +80,13 @@
     {
         _isLoading = true;
 
-        Contents = await AppDataManager.GetContentsAsync(Query ?? string.Empty, Categories.ToList());
-        Contents = Contents
-            .OrderByDescending(c => c.LastModified ?? DateTime.MinValue)
-            .ToList();
+        if (Contents == null)
+        {
+            Contents = await AppDataManager.GetContentsAsync(Query ?? string.Empty, Categories.ToList());
+            Contents = Contents
+                .OrderByDescending(c => c.LastModified ?? DateTime.MinValue)
+                .ToList();
+        }
 
         _isLoading = false;
     }

@@ -13,9 +13,9 @@
                        Class="toggle-menu-btn" />
         </div>
 
-        <div class="logo">
+        <div class="logo"style="height: 30px">
             <a href="/" style="outline: none; border: none" tabindex="-1">
-                <img src="logo.webp" alt="CodeMagic" width="40" height="40" lazy-loading />
+                <img src="logo.webp" alt="CodeMagic" width="30" height="30" lazy-loading />
             </a>
         </div>
 
@@ -37,6 +37,17 @@
                          IconOnly AriaLabel="Dark Mode" Variant="BitVariant.Outline"
                          OnClick="@OnToggleTheme"
                          Style="flex-shrink: 0;" />
+        
+        <AuthorizeView>
+            <Authorized>
+            </Authorized>
+            <NotAuthorized>
+                <BitButton ButtonType="BitButtonType.Button" 
+                    OnClick="@(() => NavigationManager.NavigateTo("authentication/login"))">
+                    Đăng nhập
+                </BitButton>
+            </NotAuthorized>
+        </AuthorizeView>
     </BitStack>
 
 </div>
@@ -58,10 +69,11 @@
     [Parameter]
     public EventCallback OnToggleTheme { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
         var currentTheme = await BitThemeManager.GetCurrentThemeAsync();
-        IsDark = currentTheme == "dark";
+        IsDark = currentTheme?.Contains("dark") ?? false;
+        StateHasChanged();
     }
 
 

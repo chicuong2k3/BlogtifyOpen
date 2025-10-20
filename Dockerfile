@@ -4,7 +4,7 @@ WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-USER $APP_UID
+# USER $APP_UID
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0.100-rc.1 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -53,5 +53,7 @@ WORKDIR /app
 COPY --from=build /app/publish .
 
 ENV ASPNETCORE_URLS=http://0.0.0.0:${PORT:-8080}
+ENV DOTNET_RUNNING_IN_CONTAINER=true
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1
 
 ENTRYPOINT ["dotnet", "Blogtify.dll"]
