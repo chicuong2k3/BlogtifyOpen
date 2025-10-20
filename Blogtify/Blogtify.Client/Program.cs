@@ -24,11 +24,13 @@ builder.Services.AddScoped<IHttpContextProxy, WebAssemblyHttpContextProxy>();
 
 builder.Services.AddCommonServices(builder.HostEnvironment, null);
 
-//builder.Services.AddAuthorizationCore(options =>
-//{
+builder.Services.AddOidcAuthentication(options =>
+{
+    builder.Configuration.Bind("Oidc", options.ProviderOptions);
+});
 
-//});
-//builder.Services.AddCascadingAuthenticationState();
-//builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
+builder.Services.AddAuthorizationCore(options =>
+{
+});
 
 await builder.Build().RunAsync();

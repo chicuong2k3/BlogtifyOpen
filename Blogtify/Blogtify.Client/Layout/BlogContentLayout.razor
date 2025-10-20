@@ -89,7 +89,11 @@
     protected override async Task OnParametersSetAsync()
     {
         if (_module != null)
-            await _module.InvokeVoidAsync("updateCodeBlock", IsDark);        
+        {
+            await _module.InvokeVoidAsync("updateCodeBlock", IsDark);
+            await _module.InvokeVoidAsync("renderMath", _contentRef);
+            await _module.InvokeVoidAsync("Render", "mermaid");
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -104,10 +108,10 @@
         // await _module.InvokeVoidAsync("loadScrollPosition", _bookmarkKey);
         // await _module.InvokeVoidAsync("addScrollListener", _bookmarkKey);
         await _module.InvokeVoidAsync("updateCodeBlock", IsDark);
-        await _module.InvokeVoidAsync("readingProgressInit", _dotNetRef, _contentRef);
         await _module.InvokeVoidAsync("renderMath", _contentRef);
-
         await _module.InvokeVoidAsync("Render", "mermaid");
+        await _module.InvokeVoidAsync("readingProgressInit", _dotNetRef, _contentRef);
+        
 
         // NavigationManager.LocationChanged += OnLocationChanged;
 

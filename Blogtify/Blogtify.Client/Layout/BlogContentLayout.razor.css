@@ -102,11 +102,11 @@
     }
 
 ::deep :not(pre) > code {
-    color: var(--bit-clr-sec);
+    color: var(--bit-clr-ter);
 }
 
     ::deep :not(pre) > code:hover {
-        color: var(--bit-clr-sec-hover);
+        color: var(--bit-clr-ter-hover);
     }
 
 
@@ -169,13 +169,13 @@
 ::deep blockquote {
     padding: calc(var(--bit-spa-scaling-factor));
     margin: calc(var(--bit-spa-scaling-factor) * 2) 0;
-    border-left: 4px solid var(--bit-clr-suc);
-    background-color: var(--bit-clr-suc-hover);
-    color: var(--bit-clr-suc-text);
-    font-style: italic;
+    border-left: 8px solid var(--bit-clr-inf);
+    background-color: var(--bit-clr-inf-hover);
+    color: var(--bit-clr-inf-text);
     border-radius: var(--bit-shp-brd-radius);
 }
 
-    ::deep blockquote:hover {
-        background-color: var(--bit-clr-suc);
+    ::deep blockquote a {
+        color: var(--bit-clr-inf-text) !important;
+        text-decoration: underline;
     }

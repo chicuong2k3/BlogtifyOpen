@@ -44,37 +44,38 @@ builder.Services.AddCors(options =>
     });
 });
 builder.Services.AddControllers();
+builder.Services.AddAntiforgery();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-//builder.Services.AddAuthentication(options =>
-//{
-//    options.DefaultScheme = IdentityConstants.ApplicationScheme;
-//    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
-//})
-//    .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
-//    {
-//        var googleOptions = builder.Configuration.GetSection("Authentication:Google").Get<GoogleAuthOptions>()
-//                                ?? throw new ArgumentNullException("Authentication:Google is missing.");
-//        options.SignInScheme = IdentityConstants.ExternalScheme;
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = OpenIdConnectDefaults.AuthenticationScheme;
+})
+    .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+    {
+        var googleOptions = builder.Configuration.GetSection("Authentication:Google").Get<GoogleAuthOptions>()
+                                ?? throw new ArgumentNullException("Authentication:Google is missing.");
+        options.SignInScheme = IdentityConstants.ExternalScheme;
 
-//        options.ClientId = googleOptions.ClientId;
-//        options.ClientSecret = googleOptions.ClientSecret;
-//    })
-//    .AddFacebook(FacebookDefaults.AuthenticationScheme, options =>
-//    {
-//        var facebookOptions = builder.Configuration.GetSection("Authentication:Facebook").Get<FacebookAuthOptions>()
-//                                    ?? throw new ArgumentNullException("Authentication:Facebook is missing.");
-//        options.SignInScheme = IdentityConstants.ExternalScheme;
-//        options.AppId = facebookOptions.AppId;
-//        options.AppSecret = facebookOptions.AppSecret;
-//        options.Scope.Add("email");
-//        options.Scope.Add("public_profile");
-//        options.ClaimActions.MapJsonKey("picture", "picture");
-//    });
+        options.ClientId = googleOptions.ClientId;
+        options.ClientSecret = googleOptions.ClientSecret;
+    })
+    .AddFacebook(FacebookDefaults.AuthenticationScheme, options =>
+    {
+        var facebookOptions = builder.Configuration.GetSection("Authentication:Facebook").Get<FacebookAuthOptions>()
+                                    ?? throw new ArgumentNullException("Authentication:Facebook is missing.");
+        options.SignInScheme = IdentityConstants.ExternalScheme;
+        options.AppId = facebookOptions.AppId;
+        options.AppSecret = facebookOptions.AppSecret;
+        options.Scope.Add("email");
+        options.Scope.Add("public_profile");
+        options.ClaimActions.MapJsonKey("picture", "picture");
+    });
 
 
 //builder.Services.AddAuthorization();
