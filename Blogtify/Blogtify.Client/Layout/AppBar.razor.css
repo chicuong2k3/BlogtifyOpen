@@ -27,7 +27,7 @@
 
 
 /* Hide on desktop */
-@media (min-width: 993px) {
+@media (min-width: 992px) {
     ::deep .toggle-menu-btn {
         display: none !important;
     }
