@@ -13,7 +13,7 @@
                        Class="toggle-menu-btn" />
         </div>
 
-        <div class="logo"style="height: 30px">
+        <div class="logo" style="height: 30px">
             <a href="/" style="outline: none; border: none" tabindex="-1">
                 <img src="logo.webp" alt="CodeMagic" width="30" height="30" lazy-loading />
             </a>
@@ -37,13 +37,18 @@
                          IconOnly AriaLabel="Dark Mode" Variant="BitVariant.Outline"
                          OnClick="@OnToggleTheme"
                          Style="flex-shrink: 0;" />
-        
+
         <AuthorizeView>
             <Authorized>
+                <form action="authentication/logout" method="post">
+                    <AntiforgeryToken />
+                    <input type="hidden" name="returnUrl" value="@NavigationManager.Uri" />
+                    <BitButton ButtonType="BitButtonType.Submit">Đăng xuất</BitButton>
+                </form>
             </Authorized>
             <NotAuthorized>
-                <BitButton ButtonType="BitButtonType.Button" 
-                    OnClick="@(() => NavigationManager.NavigateTo("authentication/login"))">
+                <BitButton ButtonType="BitButtonType.Button"
+                           OnClick="@(() => NavigationManager.NavigateTo($"authentication/login?returnUrl={@Uri.EscapeDataString(NavigationManager.Uri)}", forceLoad: true))">
                     Đăng nhập
                 </BitButton>
             </NotAuthorized>

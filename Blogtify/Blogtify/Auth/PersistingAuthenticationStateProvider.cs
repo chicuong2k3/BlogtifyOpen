@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Blogtify.Client.Auth;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
-using PlayVerse.Web.Client.Auth;
 
 namespace Blogtify.Auth;
 

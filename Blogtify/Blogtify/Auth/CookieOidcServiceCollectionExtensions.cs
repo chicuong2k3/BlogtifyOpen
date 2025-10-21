@@ -13,13 +13,20 @@ internal static class CookieOidcServiceCollectionExtensions
         {
             cookieOptions.Events.OnValidatePrincipal = context => refresher.ValidateOrRefreshCookieAsync(context, oidcScheme);
         });
+
         services.AddOptions<OpenIdConnectOptions>(oidcScheme).Configure(oidcOptions =>
         {
-            // Request a refresh_token.
-            oidcOptions.Scope.Add(OpenIdConnectScope.OfflineAccess);
-            // Store the refresh_token.
+            var provider = oidcOptions.Authority ?? "";
+
+            // Chỉ thêm offline_access nếu không phải Google
+            if (!provider.Contains("accounts.google.com", StringComparison.OrdinalIgnoreCase))
+            {
+                oidcOptions.Scope.Add(OpenIdConnectScope.OfflineAccess);
+            }
+
             oidcOptions.SaveTokens = true;
         });
+
         return services;
     }
 }

@@ -1,4 +1,4 @@
-
+﻿
 ::deep .category-tag:hover {
     cursor: pointer;
 }
@@ -75,31 +75,39 @@
     overflow-x: auto !important;
     overflow-y: hidden;
     box-sizing: border-box;
-    margin: 8px 0;
+    margin: 1rem 0;
 }
 
-::deep pre[class*="language-"],
-::deep pre {
-    width: 100%;
-    max-width: 100%;
-    white-space: pre !important;
-    overflow-wrap: anywhere !important;
-    word-wrap: break-word !important;
-    word-break: break-word !important;
-    overflow-x: auto !important;
-    overflow-y: hidden;
-    border-radius: 8px;
-    box-sizing: border-box;
-    padding: 8px 12px;
-    margin: 0;
+::deep pre,
+::deep pre code,
+::deep code {
+    font-family: "Consolas", "Courier New", monospace !important;
+    font-size: 0.9rem !important;
+    line-height: 1.5 !important;
 }
 
-    ::deep pre code,
-    ::deep pre[class*="language-"] code {
-        white-space: pre-wrap !important;
-        word-break: break-word !important;
+    ::deep pre[class*="language-"],
+    ::deep pre {
+        width: 100%;
+        max-width: 100%;
+        white-space: pre !important;
         overflow-wrap: anywhere !important;
+        word-wrap: break-word !important;
+        word-break: break-word !important;
+        overflow-x: auto !important;
+        overflow-y: hidden;
+        border-radius: 8px;
+        box-sizing: border-box;
+        padding: 8px 12px;
+        margin: 0;
     }
+
+        ::deep pre code,
+        ::deep pre[class*="language-"] code {
+            white-space: pre-wrap !important;
+            word-break: break-word !important;
+            overflow-wrap: anywhere !important;
+        }
 
 ::deep :not(pre) > code {
     color: var(--bit-clr-ter);
@@ -127,7 +135,7 @@
 /* MathJax */
 ::deep .math,
 ::deep mjx-container {
-    display: block;
+    display: inline-block;
     max-width: 100% !important;
     overflow-x: auto;
     overflow-y: hidden;
@@ -164,6 +172,7 @@
     overflow-wrap: anywhere !important;
     word-wrap: break-word !important;
     word-break: break-word !important;
+    margin: 1rem 0;
 }
 
 ::deep blockquote {
@@ -179,3 +188,52 @@
         color: var(--bit-clr-inf-text) !important;
         text-decoration: underline;
     }
+
+
+/* Table */
+::deep table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--bit-clr-fg);
+    background-color: var(--bit-clr-bg);
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+::deep thead {
+    background-color: var(--bit-clr-bg-sec); /* dùng nền phụ, sáng vừa phải */
+    color: var(--bit-clr-fg);
+    text-align: center;
+}
+
+::deep th,
+::deep td {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--bit-clr-brd-pri);
+}
+
+::deep th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+::deep tbody tr:nth-child(even) {
+    background-color: var(--bit-clr-bg-sec);
+}
+
+/* Table */
+
+
+
+::deep .bit-smr {
+    height: auto !important;
+    min-height: 1.5rem;
+    overflow: visible !important;
+}
+
+::deep .bit-smr-cnt {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}

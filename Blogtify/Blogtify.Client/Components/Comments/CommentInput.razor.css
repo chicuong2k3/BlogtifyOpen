@@ -1,0 +1,36 @@
+﻿
+.comment-input {
+    padding: 0;
+    margin: 0;
+}
+
+    .comment-input ::deep.rz-textarea {
+        width: 100%;
+        border: none !important;
+        outline: none !important;
+        background: var(--rz-secondary);
+        padding: 8px 12px;
+        margin: 0;
+    }
+
+        .comment-input ::deep.rz-textarea:hover,
+        .comment-input ::deep.rz-textarea:focus {
+            box-shadow: none !important;
+            border: none !important;
+            border-block-end: none !important;
+            outline: none !important;
+            background: var(--rz-secondary) !important;
+        }
+
+
+.comment-input-footer {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+    .comment-input-footer.show {
+        max-height: 42px;
+        opacity: 1;
+    }

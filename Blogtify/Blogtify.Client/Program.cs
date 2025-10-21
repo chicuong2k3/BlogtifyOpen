@@ -1,10 +1,9 @@
 using Blogtify.Client;
+using Blogtify.Client.Auth;
 using Blogtify.Client.Models;
 using Blogtify.Client.Theming;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using PlayVerse.Web.Client.Auth;
-using System.Diagnostics.CodeAnalysis;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -24,13 +23,8 @@ builder.Services.AddScoped<IHttpContextProxy, WebAssemblyHttpContextProxy>();
 
 builder.Services.AddCommonServices(builder.HostEnvironment, null);
 
-builder.Services.AddOidcAuthentication(options =>
-{
-    builder.Configuration.Bind("Oidc", options.ProviderOptions);
-});
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, PersistentAuthenticationStateProvider>();
 
-builder.Services.AddAuthorizationCore(options =>
-{
-});
 
 await builder.Build().RunAsync();

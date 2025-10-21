@@ -1,7 +1,7 @@
 ﻿@inject AppDataManager AppDataManager
 
 <BitShimmer Loaded="@(!isLoading)" AriaLabel="Đang tải bài viết liên quan"
-            Height="1.5rem" Background="BitColor.PrimaryBackground">
+            Background="BitColor.PrimaryBackground">
     @foreach (var content in _contents)
     {
         <ContentCard Content="@content" />

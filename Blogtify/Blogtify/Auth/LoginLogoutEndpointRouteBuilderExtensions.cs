@@ -9,13 +9,27 @@ internal static class LoginLogoutEndpointRouteBuilderExtensions
 {
     internal static IEndpointConventionBuilder MapLoginAndLogout(this IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("");
+        var group = endpoints.MapGroup("authentication");
 
         group.MapGet("/login", (string? returnUrl) => TypedResults.Challenge(GetAuthProperties(returnUrl)))
             .AllowAnonymous();
 
-        group.MapGet("/logout", ([FromQuery] string? returnUrl) => TypedResults.SignOut(GetAuthProperties(returnUrl),
-            [CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme]));
+        group.MapPost("/logout", async (HttpContext context, [FromQuery] string? returnUrl) =>
+        {
+            var props = GetAuthProperties(returnUrl);
+
+            var oidcOptionsMonitor = context.RequestServices.GetRequiredService<
+                Microsoft.Extensions.Options.IOptionsMonitor<OpenIdConnectOptions>>();
+            var oidcOptions = oidcOptionsMonitor.Get(OpenIdConnectDefaults.AuthenticationScheme);
+
+            if (oidcOptions.Configuration?.EndSessionEndpoint != null)
+            {
+                await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, props);
+            }
+
+            await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme, props);
+        });
+
 
         return group;
     }

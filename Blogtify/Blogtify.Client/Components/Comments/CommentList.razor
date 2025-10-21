@@ -1,0 +1,139 @@
+﻿@* @using SharedKernel.Authentication.Extensions
+
+@inject IUserService userService *@
+@* @inject ICommentService CommentService
+@inject NavigationManager NavigationManager
+@inject INotifService NotifService *@
+
+@* <RadzenStack Gap="20px" Style="width:100%">
+
+    <AuthorizeView Context="UserContext">
+        <Authorized>
+            <CommentInput UserAvatar="@userAvatar"
+                          Placeholder="Viết bình luận..."
+                          Lines="@CommentInputLines"
+                          OnCommentSubmitted="@((string comment) => HandleCommentSubmitted(Guid.NewGuid(), comment))" />
+        </Authorized>
+        <NotAuthorized>
+            <RadzenAlert AlertStyle="AlertStyle.Warning"
+                         Style="width:100%; text-align:center">
+                <a href="@($"/login?ReturnUrl=/post/{ContentId}")">Đăng nhập</a> để bình luận
+            </RadzenAlert>
+        </NotAuthorized>
+    </AuthorizeView>
+
+    @foreach (var comment in comments)
+    {
+        <Comment CommentDto="@comment"
+                 UserAvatar="@userAvatar"
+                 @ref="_commentComponents[comment.Id]"
+                 OnCommentDeleted="HandleCommentDeleted" />
+    }
+
+    @if (timeCursor.HasValue)
+    {
+        <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center">
+            @if (!isLoading)
+            {
+                <RadzenButton Text="Load More Comments"
+                              ButtonStyle="ButtonStyle.Primary"
+                              Style="width: 100%"
+                              Click="LoadCommentsAsync" />
+            }
+            else
+            {
+                <RadzenProgressBar Mode="ProgressBarMode.Indeterminate"
+                                   Style="width:50%" />
+            }
+        </RadzenStack>
+    }
+
+</RadzenStack>
+ *@
+@* @code {
+    private List<CommentDto> comments = new();
+
+    private Dictionary<Guid, Comment> _commentComponents = new();
+
+    [Parameter, EditorRequired]
+    public Guid ContentId { get; set; }
+
+    [Parameter]
+    public Guid? ParentCommentId { get; set; }
+
+    [Parameter]
+    public int CommentInputLines { get; set; } = 3;
+
+    private string userAvatar = string.Empty;
+
+    private DateTime? timeCursor;
+    private Guid? oldContentId = null;
+    private bool isLoading = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (oldContentId != ContentId)
+        {
+            comments.Clear();
+            oldContentId = ContentId;
+
+            timeCursor = ParentCommentId.HasValue ? DateTime.MinValue : DateTime.UtcNow;
+        }
+
+        await LoadCommentsAsync();
+
+        // var user = await userService.GetUserInfoAsync();
+        // _userAvatar = user?.Avatar ?? string.Empty;
+    }
+
+    private async Task LoadCommentsAsync()
+    {
+        if (timeCursor.HasValue)
+        {
+            isLoading = true;
+
+            var response = await CommentService.GetCommentsAsync(3, timeCursor.Value, ContentId, ParentCommentId, "asc");
+            Console.WriteLine($"Response: {response}");
+            if (response != null)
+            {
+                var data = response.GetContent();
+                comments.AddRange(data.Comments.ToList());
+                Console.WriteLine($"Loaded {comments.Count} comments.");
+                timeCursor = data.TimeCursor;
+            }
+
+            isLoading = false;
+        }
+    }
+
+    private async Task HandleCommentSubmitted(Guid userId, string comment)
+    {
+        var result = await CommentService.CreateAsync(
+            new CreateCommentRequest(ContentId, comment, ParentCommentId));
+
+        if (result.ResponseMessage.IsSuccessStatusCode)
+        {
+            comments.Add(new CommentDto(
+                result.GetContent().Id,
+                result.GetContent().UserId,
+                result.GetContent().ContentId,
+                result.GetContent().Content,
+                result.GetContent().CreatedAt,
+                result.GetContent().LastModifiedAt,
+                result.GetContent().ParentCommentId,
+                0
+            ));
+        }
+    }
+
+    private void HandleCommentDeleted(Guid commentId)
+    {
+        comments.RemoveAll(c => c.Id == commentId);
+        if (_commentComponents.ContainsKey(commentId))
+        {
+            //_commentComponents[commentId].CommentDto = null;
+            //_commentComponents.Remove(commentId);
+        }
+        StateHasChanged();
+    }
+} *@
