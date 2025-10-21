@@ -15,39 +15,56 @@
           content="Code Magic là không gian chuyên sâu lưu trữ và trao đổi kiến thức về phát triển phần mềm, lập trình điện tử, toán học và vật lý. Khám phá hành trình biến khoa học thành công cụ giải quyết vấn đề phức tạp." />
 </HeadContent>
 
+@if (!RendererInfo.IsInteractive)
+{
+    <div>
+        <BitOverlay IsOpen="true" Class="overlay">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">
+                <span>Đang tải</span>
+                <div class="loading-dots">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+            </div>
+        </BitOverlay>
+    </div>
+}
+
 <CascadingValue Value="@IsDark">
-<BitThemeProvider>
-    <AppBar OnToggleDrawer="@ToggleDrawer" OnToggleTheme="@ToggleTheme" />
+    <BitThemeProvider>
+        <AppBar OnToggleDrawer="@ToggleDrawer" OnToggleTheme="@ToggleTheme" />
 
-    <!-- Sidebar Desktop -->
-    <aside class="sidebar desktop">
-        <BitNav Items="@sidebarItems" AriaLabel="Menu bên"
-                DefaultSelectedItem="@sidebarItems[0]"
-                AllExpanded Mode="BitNavMode.Automatic" Style="width: 230px"
-                Match="BitNavMatch.Prefix" SelectedItem="@selectedItem"
-                OnItemClick="(BitNavItem item) => OnSelectedItemChanged(item)" />
-    </aside>
-
-    <!-- Sidebar Mobile (Drawer) -->
-    <div class="sidebar" aria-label="Menu bên">
-        <BitPanel @bind-IsOpen="isDrawerOpen" AriaLabel="Menu bên"
-                  Position="BitPanelPosition.Start">
-            <BitNav Items="@sidebarItems" DefaultSelectedItem="@sidebarItems[0]"
+        <!-- Sidebar Desktop -->
+        <aside class="sidebar desktop">
+            <BitNav Items="@sidebarItems" AriaLabel="Menu bên"
+                    DefaultSelectedItem="@sidebarItems[0]"
                     AllExpanded Mode="BitNavMode.Automatic" Style="width: 230px"
                     Match="BitNavMatch.Prefix" SelectedItem="@selectedItem"
                     OnItemClick="(BitNavItem item) => OnSelectedItemChanged(item)" />
-        </BitPanel>
-    </div>
-    <main class="main-content">
-        @Body
-    </main>
+        </aside>
 
-    <Footer />
+        <!-- Sidebar Mobile (Drawer) -->
+        <div class="sidebar" aria-label="Menu bên">
+            <BitPanel @bind-IsOpen="isDrawerOpen" AriaLabel="Menu bên"
+                      Position="BitPanelPosition.Start">
+                <BitNav Items="@sidebarItems" DefaultSelectedItem="@sidebarItems[0]"
+                        AllExpanded Mode="BitNavMode.Automatic" Style="width: 230px"
+                        Match="BitNavMatch.Prefix" SelectedItem="@selectedItem"
+                        OnItemClick="(BitNavItem item) => OnSelectedItemChanged(item)" />
+            </BitPanel>
+        </div>
+        <main class="main-content">
+            @Body
+        </main>
+
+        <Footer />
 
 
-  @*   <SettingsButton /> *@
-    <BackToTopButton />
-</BitThemeProvider>
+        @*   <SettingsButton /> *@
+        <BackToTopButton />
+    </BitThemeProvider>
 </CascadingValue>
 
 @code {

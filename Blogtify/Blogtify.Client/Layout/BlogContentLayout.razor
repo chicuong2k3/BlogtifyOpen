@@ -51,15 +51,19 @@
     </ChildContent>
 </BitCard> *@
 
-<!-- Related posts -->
-<BitCard NoShadow FullWidth Style="margin-top: 4px">
-    <ChildContent>
-        <BitStack>
-            <BitText Typography="BitTypography.H1">Gợi ý</BitText>
+<BitCard NoShadow FullWidth Style="margin-top:4px; padding:1rem;">
+    <BitStack>
+        <BitText Typography="BitTypography.H1">Gợi ý</BitText>
+
+        <div style="display:block;">
             <RelatedPosts Content="@_currentContent" />
-        </BitStack>
-    </ChildContent>
+        </div>
+    </BitStack>
 </BitCard>
+
+
+
+
 
 <div class="reading-progress-container">
     <BitProgress Percent="_progress"
@@ -111,7 +115,7 @@
         await _module.InvokeVoidAsync("renderMath", _contentRef);
         await _module.InvokeVoidAsync("Render", "mermaid");
         await _module.InvokeVoidAsync("readingProgressInit", _dotNetRef, _contentRef);
-        
+
 
         // NavigationManager.LocationChanged += OnLocationChanged;
 

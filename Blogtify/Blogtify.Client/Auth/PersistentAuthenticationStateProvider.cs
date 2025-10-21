@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;
 
-namespace PlayVerse.Web.Client.Auth;
+namespace Blogtify.Client.Auth;
 
 internal sealed class PersistentAuthenticationStateProvider : AuthenticationStateProvider
 {

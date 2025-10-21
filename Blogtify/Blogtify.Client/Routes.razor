@@ -2,11 +2,11 @@
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
-            <RouteView RouteData="routeData" DefaultLayout="@typeof(MainLayout)">
-                @* <NotAuthorized>
-                    <Blogtify.Client.Auth.RedirectToLogin />
-                </NotAuthorized> *@
-            </RouteView>
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <p>Bạn cần đăng nhập để truy cập trang này.</p>
+                </NotAuthorized>
+            </AuthorizeRouteView>
         </Found>
         <NotFound>
             <PageTitle>Not found</PageTitle>

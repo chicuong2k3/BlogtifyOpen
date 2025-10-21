@@ -1,0 +1,151 @@
+﻿@* @inject TooltipService TooltipService
+@inject INotifService NotifService *@
+
+@* <RadzenStack Orientation="Orientation.Horizontal" Gap="10px" AlignItems="AlignItems.Start">
+
+    <RadzenGravatar Style="height:32px; width: 32px">
+        <RadzenImage Path="@(UserAvatar)" />
+    </RadzenGravatar>
+
+    <RadzenStack Gap="0" Style="width: 100%">
+        <RadzenCard Style="width:100%; padding: 0;margin:0">
+            <RadzenStack Gap="0">
+                <div class="comment-input">
+                    <RadzenTextArea Value="@CommentText" @oninput="@(e => CommentText = ((ChangeEventArgs)e).Value.ToString() ?? string.Empty)"
+                                    Style="@(isFocus ? "border-bottom-left-radius: 0;border-bottom-right-radius: 0;" : "")"
+                                    Placeholder="@Placeholder" onfocus="@(() => { isFocus = true; StateHasChanged(); })"
+                                    Rows="@Lines" />
+                </div>
+
+                <div class="@("comment-input-footer " + (isFocus ? "show" : ""))">
+                    <RadzenStack Orientation="Orientation.Horizontal" Style="padding: 4px 8px"
+                                 JustifyContent="JustifyContent.SpaceBetween"
+                                 AlignItems="AlignItems.Center">
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="8px">
+                            <!-- Emoji -->
+                            <RadzenButton Icon="insert_emoticon" Style="padding: 8px"
+                                          ButtonStyle="ButtonStyle.Secondary"
+                                          Variant="Variant.Text"
+                                          Click="OpenEmojiPicker" />
+
+                            <!-- Image Upload -->
+                            @* <RadzenUpload ChooseText=""
+                                      Accept=".jpg,.png,.gif"
+                                      Url="" Icon="image"
+                                      Progress="@OnUploadProgress"
+                                      Complete="@OnUploadComplete" /> *@
+@*                         </RadzenStack>
+
+                        <RadzenStack Orientation="Orientation.Horizontal" Gap="8px">
+                            <RadzenButton Text="Cancel"
+                                          ButtonStyle="ButtonStyle.Secondary"
+                                          Click="@(() => isFocus = false)" />
+
+                            <RadzenButton Text="Send"
+                                          ButtonStyle="ButtonStyle.Primary"
+                                          Disabled="@string.IsNullOrWhiteSpace(CommentText)"
+                                          Click="SubmitComment" />
+                        </RadzenStack>
+                    </RadzenStack>
+                </div>
+            </RadzenStack>
+        </RadzenCard>
+
+        @if (!string.IsNullOrEmpty(SelectedImage))
+        {
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="4px" Style="margin-top:8px;">
+                <RadzenImage Path="@SelectedImage" Style="width:100px; border-radius:4px;" />
+                <RadzenButton Icon="close" ButtonStyle="ButtonStyle.Danger" Size="ButtonSize.Small" Click="ClearImage" />
+            </RadzenStack>
+        }
+    </RadzenStack>
+</RadzenStack> *@
+
+@* @if (ShowEmojiPicker)
+{
+    <div class="emoji-picker">
+        <RadzenButton Text="😀" class="rz-border-radius-10" Size="ButtonSize.ExtraSmall" Click="@(args => AddEmoji("😀"))" />
+        <RadzenButton Text="😂" Size="ButtonSize.Small" Click="@(args => AddEmoji("😂"))" />
+        <RadzenButton Text="😍" Size="ButtonSize.Small" Click="@(args => AddEmoji("😍"))" />
+    </div>
+}  *@
+
+@* @code {
+    [Parameter, EditorRequired]
+    public EventCallback<string> OnCommentSubmitted { get; set; }
+
+    [Parameter, EditorRequired]
+    public string UserAvatar { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Placeholder { get; set; } = "Write a comment...";
+
+    [Parameter]
+    public int Lines { get; set; } = 3;
+
+    private string CommentText = string.Empty;
+    string? SelectedImage;
+    bool ShowEmojiPicker = false;
+
+    private bool isFocus = false;
+
+    private async Task SubmitComment()
+    {
+        if (!string.IsNullOrWhiteSpace(CommentText))
+        {
+            var comment = CommentText;
+            if (!string.IsNullOrEmpty(SelectedImage))
+            {
+                comment = $"{comment} <div style='margin-top: 10px'><img src='{SelectedImage}' alt='Comment image' width='100' /></div>";
+            }
+
+            await OnCommentSubmitted.InvokeAsync(comment);
+            CommentText = string.Empty;
+            SelectedImage = null;
+        }
+        else
+        {
+            NotifService.Error("Có lỗi xảy ra.");
+        }
+    }
+
+    private void OpenEmojiPicker()
+    {
+        ShowEmojiPicker = !ShowEmojiPicker;
+        NotifService.Info("Tính năng emoji đang được phát triển");
+    }
+
+    private void AddEmoji(string emoji)
+    {
+        CommentText += emoji;
+        ShowEmojiPicker = false;
+    }
+
+    private void ClearImage()
+    {
+        SelectedImage = null;
+    }
+
+    private async void OnUploadProgress(UploadProgressArgs args)
+    {
+        // Optional: progress bar
+    }
+
+    private async void OnUploadComplete(UploadCompleteEventArgs args)
+    {
+        // if (args.RawFile != null)
+        // {
+        //     SelectedImage = await ConvertToBase64Async(args.RawFile);
+        //     StateHasChanged();
+        // }
+    }
+
+    private async Task<string> ConvertToBase64Async(IBrowserFile file)
+    {
+        using var stream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024);
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        var bytes = memoryStream.ToArray();
+        return $"data:{file.ContentType};base64,{Convert.ToBase64String(bytes)}";
+    }
+} *@

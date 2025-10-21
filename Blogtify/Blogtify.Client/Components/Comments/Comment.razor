@@ -1,0 +1,185 @@
+﻿@* @using System.Security.Claims
+@inject ICommentService commentService *@
+@* @inject IDialogService dialogService
+@inject IUserService userService
+@inject AuthorizationService authorizationService *@
+
+@* @if (CommentDto != null)
+{
+    <RadzenStack Gap="0" AlignItems="AlignItems.Start">
+        <RadzenCard Style="width: 100%; background: none">
+            <RadzenStack Orientation="Orientation.Horizontal" Gap="8px">
+                <RadzenGravatar Style="height:32px; width: 32px">
+                    <RadzenImage Path="@(commenter != null ? commenter.Avatar : "")" />
+                </RadzenGravatar>
+
+                <RadzenStack Gap="4px" Style="width: 100%">
+                    @if (commenter != null)
+                    {
+                        <RadzenText TextStyle="TextStyle.Subtitle2">
+                            @commenter.DisplayName
+                        </RadzenText>
+                    }
+                    else
+                    {
+                        <RadzenText TextStyle="TextStyle.Subtitle2">
+                            Người dùng đã bị xoá
+                        </RadzenText>
+                    }
+                    <RadzenText TextStyle="TextStyle.Caption">
+                        @CommentDto.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")
+                    </RadzenText>
+
+                    <RadzenText TextStyle="TextStyle.Body1">
+                        @((MarkupString)CommentDto.Content)
+                    </RadzenText>
+
+                    <AuthorizeView Context="UserContext">
+                        <Authorized>
+                            <RadzenStack Orientation="Orientation.Horizontal"
+                                         AlignItems="AlignItems.Center"
+                                         Gap="16px">
+
+
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="4px">
+                                    <RadzenButton Icon="@("\uf164")" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small" Variant="Variant.Text" />
+                                    <RadzenText TextStyle="TextStyle.Subtitle2" Text="253" />
+                                </RadzenStack>
+
+                                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="4px">
+                                    <RadzenButton Icon="@("\uf165")" ButtonStyle="ButtonStyle.Info" Size="ButtonSize.Small" Variant="Variant.Text" />
+                                    <RadzenText TextStyle="TextStyle.Subtitle2" Text="2" />
+                                </RadzenStack>
+
+                                @if (!CommentDto.ParentCommentId.HasValue)
+                                {
+                                    <RadzenButton Text="Reply" Variant="Variant.Text"
+                                                  Style="padding: 0; min-width: 0;min-height:0;background: none"
+                                                  Click="ReplyComment" />
+                                }
+
+                                @if (true)
+                                {
+                                    <RadzenButton Text="Delete" Variant="Variant.Text"
+                                                  Style="padding: 0; min-width: 0;min-height:0;background: none;"
+                                                  Click="OpenDeleteCommentDialog" />
+                                }
+                            </RadzenStack>
+
+                            @if (showReplies)
+                            {
+                                <div style="margin-top: 12px;">
+                                    @if (!isRepliesShowing)
+                                    {
+                                        <RadzenStack>
+                                            <CommentList CommentInputLines="3"
+                                                         ContentId="@CommentDto.ContentId"
+                                                         ParentCommentId="@CommentDto.Id" />
+                                        </RadzenStack>
+                                    }
+                                    else
+                                    {
+                                        <RadzenProgressBar Mode="ProgressBarMode.Indeterminate"
+                                                           Style="width:30px; height:30px;" />
+                                    }
+                                </div>
+                            }
+                            else if (CommentDto.ChildrenCount > 0)
+                            {
+                                <RadzenButton Text="Show more replies" Variant="Variant.Text" ButtonStyle="ButtonStyle.Secondary"
+                                              Style="padding: 0; min-width: 0;min-height:0;background: none;display: inline-flex"
+                                              Click="ShowRelies" />
+                            }
+                        </Authorized>
+                    </AuthorizeView>
+                </RadzenStack>
+
+
+            </RadzenStack>
+        </RadzenCard>
+    </RadzenStack>
+} *@
+
+@* 
+@code {
+    [Parameter]
+    public CommentDto? CommentDto { get; set; }
+
+    UserDto? commenter;
+
+    [Parameter, EditorRequired]
+    public required string UserAvatar { get; set; }
+
+    [Parameter]
+    public EventCallback<Guid> OnCommentDeleted { get; set; }
+
+    bool showReplies = false;
+    bool isRepliesShowing = false;
+    bool canManageComment = false;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; } = default!;
+
+    ClaimsPrincipal? user;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = (await AuthenticationStateTask).User;
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (CommentDto != null)
+        {
+            // var response = await userService.GetUserByIdAsync(CommentDto.UserId);
+            // if (response != null)
+            // {
+            //     _commenter = response;
+            //     _canManageComment = _user != null &&
+            //         await authorizationService.IsAuthorizedToManageComment(_user, CommentDto.Id);
+            // }
+        }
+    }
+
+    private async Task ShowRelies()
+    {
+        isRepliesShowing = true;
+        showReplies = true;
+        await Task.Delay(500);
+        isRepliesShowing = false;
+    }
+
+    private void ReplyComment()
+    {
+        showReplies = true;
+    }
+
+    private async Task OpenDeleteCommentDialog()
+    {
+        var dialogOptions = new DialogOptions()
+        {
+            Width = "400px"
+        };
+
+        var parameters = new Dictionary<string, object>
+        {
+            { "CommentId", CommentDto!.Id }
+        };
+
+        // var result = await dialogService.OpenAsync<DeleteCommentDialog>("Xoá bình luận", parameters, dialogOptions);
+
+        // if (result != null && CommentDto != null)
+        // {
+        //     await OnCommentDeleted.InvokeAsync(CommentDto.Id);
+        // }
+    }
+
+    private void HandleParentCommentDeleted(Guid commentId)
+    {
+        if (CommentDto != null && CommentDto.Id == commentId)
+        {
+            CommentDto = null;
+            StateHasChanged();
+        }
+    }
+} *@

@@ -1,27 +1,67 @@
-using Blogtify.Auth;
+﻿using Blogtify.Auth;
 using Blogtify.Client;
 using Blogtify.Client.Theming;
 using Blogtify.Components;
-using Blogtify.Configs;
 using Blogtify.Data;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Facebook;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveWebAssemblyComponents();
+
+
+builder.Services.AddScoped<AuthenticationStateProvider, PersistingAuthenticationStateProvider>();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddAuthorization();
+
+JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+})
+.AddCookie(options =>
+{
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+})
+.AddOpenIdConnect(options =>
+{
+    builder.Configuration.Bind("Oidc", options);
+    options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.SaveTokens = true;
+    options.GetClaimsFromUserInfoEndpoint = true;
+    options.Scope.Add("openid");
+    options.Scope.Add("profile");
+    options.Scope.Add("email");
+
+    options.ClaimActions.MapJsonKey("sub", "sub");
+    options.ClaimActions.MapUniqueJsonKey(ClaimTypes.NameIdentifier, "sub");
+    options.ClaimActions.MapUniqueJsonKey(ClaimTypes.Email, "email");
+    options.ClaimActions.MapUniqueJsonKey("picture", "picture");
+
+    options.TokenValidationParameters.NameClaimType = ClaimTypes.Email;
+});
+
+builder.Services.ConfigureCookieOidcRefresh(
+    CookieAuthenticationDefaults.AuthenticationScheme,
+    OpenIdConnectDefaults.AuthenticationScheme);
 
 builder.Services.AddResponseCompression(opts =>
 {
@@ -51,41 +91,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-//builder.Services.AddAuthentication(options =>
-//{
-//    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-//    options.DefaultSignInScheme = OpenIdConnectDefaults.AuthenticationScheme;
-//})
-//    .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
-//    {
-//        var googleOptions = builder.Configuration.GetSection("Authentication:Google").Get<GoogleAuthOptions>()
-//                                ?? throw new ArgumentNullException("Authentication:Google is missing.");
-//        options.SignInScheme = IdentityConstants.ExternalScheme;
-
-//        options.ClientId = googleOptions.ClientId;
-//        options.ClientSecret = googleOptions.ClientSecret;
-//    })
-//    .AddFacebook(FacebookDefaults.AuthenticationScheme, options =>
-//    {
-//        var facebookOptions = builder.Configuration.GetSection("Authentication:Facebook").Get<FacebookAuthOptions>()
-//                                    ?? throw new ArgumentNullException("Authentication:Facebook is missing.");
-//        options.SignInScheme = IdentityConstants.ExternalScheme;
-//        options.AppId = facebookOptions.AppId;
-//        options.AppSecret = facebookOptions.AppSecret;
-//        options.Scope.Add("email");
-//        options.Scope.Add("public_profile");
-//        options.ClaimActions.MapJsonKey("picture", "picture");
-//    });
-
-
-//builder.Services.AddAuthorization();
-
-//builder.Services.AddCascadingAuthenticationState();
-//builder.Services.AddScoped<AuthenticationStateProvider, PersistingAuthenticationStateProvider>();
-//builder.Services.AddHttpContextAccessor();
-
-//builder.Services.ConfigureCookieOidcRefresh(CookieAuthenticationDefaults.AuthenticationScheme, OpenIdConnectDefaults.AuthenticationScheme);
-
 
 var app = builder.Build();
 
@@ -110,10 +115,14 @@ app.UseStaticFiles(new StaticFileOptions
 });
 app.UseAntiforgery();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapRazorComponents<App>()
     .AddInteractiveWebAssemblyRenderMode()
     .AddAdditionalAssemblies(typeof(Blogtify.Client._Imports).Assembly);
 
+app.MapLoginAndLogout();
 app.MapControllers();
 
 app.Run();
