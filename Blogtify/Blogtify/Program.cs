@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,19 @@ using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var keyBase64 = builder.Configuration["DATAPROTECTION_KEY"];
+var keyDir = new DirectoryInfo("/app/keys");
+keyDir.Create();
+
+if (!string.IsNullOrEmpty(keyBase64))
+{
+    var keyBytes = Convert.FromBase64String(keyBase64);
+    File.WriteAllBytes(Path.Combine("/app/keys", "manual-key.xml"), keyBytes);
+}
+
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(keyDir)
+    .SetApplicationName("Blogtify");
 
 
 // Add services to the container.
