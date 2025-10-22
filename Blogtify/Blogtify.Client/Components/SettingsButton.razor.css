@@ -8,6 +8,11 @@
 }
 
     #settingsWrapper ::deep .settings-btn {
+        aspect-ratio: 1 / 1;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         border-radius: 50%;
         box-shadow: var(--bit-shd-2);
         transition: all 0.2s ease;
