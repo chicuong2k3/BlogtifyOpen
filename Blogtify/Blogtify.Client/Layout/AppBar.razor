@@ -10,7 +10,8 @@
             <BitButton OnClick="OnToggleDrawer" AriaLabel="Bật tắt menu"
                        IconName="@BitIconName.ContextMenu"
                        Color="BitColor.Primary"
-                       Class="toggle-menu-btn" />
+                       Class="toggle-menu-btn"
+                       Style="padding: calc(var(--bit-spa-scaling-factor) * 0.5) calc(var(--bit-spa-scaling-factor))" />
         </div>
 
         <div class="logo" style="height: 30px">
@@ -32,11 +33,11 @@
                       Background="BitColorKind.Primary"
                       Style="flex: 1;" />
 
-        <BitToggleButton OnIconName="@BitIconName.HazyDay" IsChecked="@(!IsDark)"
-                         OffIconName="@BitIconName.HazyNight"
-                         IconOnly AriaLabel="Dark Mode" Variant="BitVariant.Outline"
-                         OnClick="@OnToggleTheme"
-                         Style="flex-shrink: 0;" />
+        <BitToggleButton OnIconName="@BitIconName.HazyNight" @bind-IsChecked="@IsDark"
+                         OffIconName="@BitIconName.HazyDay"
+                         AriaLabel="Dark Mode" Variant="BitVariant.Outline"
+                         OnClick="@OnToggleTheme" 
+                         Style="padding: calc(var(--bit-spa-scaling-factor) * 0.5) calc(var(--bit-spa-scaling-factor))" />
 
         <AuthorizeView>
             <Authorized>
@@ -45,6 +46,8 @@
                     <input type="hidden" name="returnUrl" value="@NavigationManager.Uri" />
                     <BitButton ButtonType="BitButtonType.Submit">Đăng xuất</BitButton>
                 </form>
+                <BitPersona ImageUrl="https://example.com/avatar.jpg" 
+                    Size="BitPersonaSize.Size32"  />
             </Authorized>
             <NotAuthorized>
                 <BitButton ButtonType="BitButtonType.Button"

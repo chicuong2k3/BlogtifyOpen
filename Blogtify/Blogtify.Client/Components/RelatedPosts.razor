@@ -10,9 +10,9 @@
 
 @code {
     [Parameter, EditorRequired]
-    public ContentDto Content { get; set; } = default!;
+    public Content Content { get; set; } = default!;
 
-    private List<ContentDto> _contents = [];
+    private List<Content> _contents = [];
 
     private bool isLoading = false;
 

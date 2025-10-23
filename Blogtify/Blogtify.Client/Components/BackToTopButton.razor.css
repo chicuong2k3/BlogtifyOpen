@@ -10,6 +10,7 @@
     z-index: 1000;
     border-radius: 50%;
     box-shadow: var(--bit-shd-2);
+    padding: calc(var(--bit-spa-scaling-factor) * 0.5) calc(var(--bit-spa-scaling-factor))
 }
 
     ::deep .back-to-top-btn.show {

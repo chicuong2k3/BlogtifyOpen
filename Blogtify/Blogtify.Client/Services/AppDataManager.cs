@@ -11,7 +11,7 @@ namespace Blogtify.Client.Services;
 public class AppDataManager
 {
     private readonly HttpClient _httpClient;
-    private List<ContentDto>? _cachedContents;
+    private List<Models.Content>? _cachedContents;
 
     private readonly Dictionary<string, string> _detailsCache = new();
 
@@ -40,13 +40,13 @@ public class AppDataManager
             (p.Details?.Contains(query, StringComparison.OrdinalIgnoreCase) ?? false));
     }
 
-    public async Task<List<ContentDto>> GetContentsAsync(
+    public async Task<List<Models.Content>> GetContentsAsync(
         string query,
         List<string> categories)
     {
         var contents = FilterContents(query, categories);
 
-        var result = new List<ContentDto>();
+        var result = new List<Models.Content>();
         foreach (var p in contents)
         {
             var matchTitle = NormalizeText(p.Title).Contains(NormalizeText(query));
@@ -66,7 +66,7 @@ public class AppDataManager
             .ToList();
     }
 
-    public ContentDto? GetContentByRoute(string route)
+    public Models.Content? GetContentByRoute(string route)
     {
         return GetAllContents()
             .FirstOrDefault(p => p.Route.Equals(route, StringComparison.OrdinalIgnoreCase));
@@ -77,7 +77,7 @@ public class AppDataManager
         return GetAllContents().OrderByDescending(c => c.Id).First().Id;
     }
 
-    public List<ContentDto> GetRecommendContents(ContentDto content)
+    public List<Models.Content> GetRecommendContents(Models.Content content)
     {
         var contents = GetAllContents()
             .Where(c => !string.IsNullOrEmpty(c.Category)
@@ -90,7 +90,7 @@ public class AppDataManager
         ];
     }
 
-    private async Task<string> GetDetailsAsync(ContentDto content)
+    private async Task<string> GetDetailsAsync(Models.Content content)
     {
         if (_detailsCache.TryGetValue(content.Route, out var details))
             return details;
@@ -101,7 +101,7 @@ public class AppDataManager
         return details;
     }
 
-    private List<ContentDto> GetAllContents()
+    private List<Models.Content> GetAllContents()
     {
         if (_cachedContents != null)
             return _cachedContents;
@@ -122,7 +122,7 @@ public class AppDataManager
                 var id = meta?.Id ?? throw new Exception($"Post '{title}' does not have id.");
                 var lastModified = meta?.LastModified;
 
-                return new ContentDto
+                return new Models.Content
                 {
                     Id = id,
                     Title = title,
@@ -131,8 +131,8 @@ public class AppDataManager
                     Cover = cover,
                     IsDraft = isDraft ?? false,
                     LastModified = lastModified != null
-                        ? DateTime.ParseExact(lastModified, "dd-MM-yyyy",
-                            System.Globalization.CultureInfo.InvariantCulture)
+                        ? global::System.DateTime.ParseExact(lastModified, "dd-MM-yyyy",
+                            global::System.Globalization.CultureInfo.InvariantCulture)
                         : null
                 };
             })
@@ -142,7 +142,7 @@ public class AppDataManager
         return _cachedContents;
     }
 
-    private List<ContentDto> FilterContents(string query, List<string> categories)
+    private List<Models.Content> FilterContents(string query, List<string> categories)
     {
         query ??= string.Empty;
 
@@ -175,7 +175,7 @@ public class AppDataManager
         return Regex.Replace(text, @"\s+", " ").Trim();
     }
 
-    private List<ContentDto> GetAllPosts()
+    private List<Models.Content> GetAllPosts()
     {
         return GetAllContents()
             .Where(c => c.Route.StartsWith("/post"))
@@ -187,7 +187,7 @@ public class AppDataManager
         return GetAllPosts().Select(p => p.Category).Distinct().ToList()!;
     }
 
-    private List<ContentDto> GetAllCourses()
+    private List<Models.Content> GetAllCourses()
     {
         return GetAllContents()
             .Where(c => c.Route.StartsWith("/course"))
