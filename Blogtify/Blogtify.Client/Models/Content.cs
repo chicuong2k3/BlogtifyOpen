@@ -1,6 +1,6 @@
 ﻿namespace Blogtify.Client.Models;
 
-public class ContentDto
+public class Content
 {
     public int Id { get; set; }
     public string Route { get; set; } = string.Empty;

@@ -75,7 +75,7 @@
 
 @code {
     private IJSObjectReference? _module;
-    private ContentDto? _currentContent;
+    private Content? _currentContent;
     private string _bookmarkKey => $"article-{_currentContent?.Route}-scroll";
     private DotNetObjectReference<BlogContentLayout>? _dotNetRef;
     private ElementReference _contentRef;

@@ -22,7 +22,7 @@ public class SitemapController : ControllerBase
         var request = HttpContext.Request;
         var baseUri = $"{request.Scheme}://{request.Host.Value}";
 
-        List<ContentDto> contents = (await _appDataManager.GetContentsAsync(string.Empty, []))
+        List<Content> contents = (await _appDataManager.GetContentsAsync(string.Empty, []))
                                         .OrderByDescending(c => c.LastModified ?? DateTime.MinValue)
                                         .ToList();
 

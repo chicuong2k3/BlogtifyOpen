@@ -53,7 +53,7 @@
 
 @code {
     [PersistentState(AllowUpdates = true)]
-    public List<ContentDto>? Contents { get; set; }
+    public List<Content>? Contents { get; set; }
     private List<BitDropdownItem<string>> _sortFilters = new()
     {
         new() { Text = "Mới nhất", Value = "desc" },
