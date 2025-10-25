@@ -1,20 +1,26 @@
-﻿using Blogtify.Auth;
+﻿using Blogtify.Abstractions.Cqrs;
+using Blogtify.Auth;
 using Blogtify.Client;
 using Blogtify.Client.Theming;
 using Blogtify.Components;
 using Blogtify.Data;
+using Blogtify.Data.Repositories;
+using Blogtify.Middlewares;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.JsonWebTokens;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.OpenApi.Models;
+using Npgsql;
+using System.Data;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -77,6 +83,14 @@ builder.Services.ConfigureCookieOidcRefresh(
     CookieAuthenticationDefaults.AuthenticationScheme,
     OpenIdConnectDefaults.AuthenticationScheme);
 
+builder.Services.AddScoped<IAuthorizationHandler, CommentOwnerAuthorizationHandler>();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(PolicyConstants.CanManageComment, policy =>
+        policy.AddRequirements(new CommentOwnerRequirement()));
+});
+
+
 builder.Services.AddResponseCompression(opts =>
 {
     opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -97,14 +111,60 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+
 builder.Services.AddControllers();
 builder.Services.AddAntiforgery();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
 {
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "PlayVerse API", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n " +
+                      "Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\n" +
+                      "Example: \"Bearer jwt\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+            },
+            new List<string>()
+        }
+    });
 });
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseNpgsql(connectionString);
+});
+
+builder.Services.AddScoped<IDbConnection>(sp =>
+{
+    return new NpgsqlConnection(connectionString);
+});
+
+builder.Services.AddScoped(typeof(IRepositoryBase<,>), typeof(RepositoryBase<,>));
+builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+
+builder.Services.AddCqrs();
 
 var app = builder.Build();
 
@@ -112,7 +172,11 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.UseGlobalExceptionHandling();
 
 app.UseHttpsRedirection();
 app.UseCors();

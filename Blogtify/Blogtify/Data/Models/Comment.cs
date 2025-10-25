@@ -1,8 +1,9 @@
-﻿namespace Blogtify.Data.Models;
+﻿using Blogtify.Client.Models;
 
-public class Comment
+namespace Blogtify.Data.Models;
+
+public class Comment : Entity<Guid>
 {
-    public Guid Id { get; set; }
     public Guid ContentId { get; private set; }
     public Guid UserId { get; private set; }
     public string Content { get; private set; } = string.Empty;

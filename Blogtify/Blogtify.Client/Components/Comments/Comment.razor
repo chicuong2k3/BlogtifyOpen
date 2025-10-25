@@ -1,37 +1,38 @@
-﻿@* @using System.Security.Claims
+﻿@using System.Security.Claims
+@using Blogtify.Client.Auth
 @using Blogtify.Client.Shared.Comments
+@using Blogtify.Client.Shared.Services
+@using Microsoft.AspNetCore.Authorization
 @inject ICommentService CommentService
-@inject IDialogService DialogService
-@inject IUserService UserService
-@inject AuthorizationService AuthorizationService *@
+@inject IAuthorizationService AuthorizationService 
 
-@* @if (CommentDto is not null)
+@if (CommentDto is not null)
 {
     <BitStack Style="width:100%" Gap="0">
         <BitCard Style="background:none; width:100%">
-            <BitStack Orientation="BitStackOrientation.Horizontal" Gap="8px" Align="BitStackAlignItems.Start">
-                <BitAvatar Size="BitAvatarSize.Small"
-                           Text="@(commenter?.DisplayName?[0].ToString().ToUpper() ?? "?")"
-                           ImageUrl="@commenter?.Avatar" />
+            <BitStack Horizontal Gap="8px" VerticalAlign="BitAlignment.Start">
+                <BitPersona Size="BitPersonaSize.Size32"
+                            PrimaryText="@(commenter?.Name?[0].ToString().ToUpper() ?? "?")"
+                           ImageUrl="@commenter?.Picture" />
 
                 <BitStack Gap="4px" Style="width:100%">
                     @if (commenter is not null)
                     {
-                        <BitText Variant="BitTextVariant.BodyStrong">
-                            @commenter.DisplayName
+                        <BitText>
+                            @commenter.Name
                         </BitText>
                     }
                     else
                     {
-                        <BitText Variant="BitTextVariant.BodyStrong">Người dùng đã bị xoá</BitText>
+                        <BitText>Người dùng đã bị xoá</BitText>
                     }
 
-                    <BitText Variant="BitTextVariant.Caption"
+                    <BitText Typography="BitTypography.Caption1"
                              Style="opacity:.7">
                         @CommentDto.CreatedAt.ToLocalTime().ToString("dd/MM/yyyy")
                     </BitText>
 
-                    <BitText Variant="BitTextVariant.Body1" Style="white-space:pre-wrap">
+                    <BitText Typography="BitTypography.Body1" Style="white-space:pre-wrap">
                         @((MarkupString)CommentDto.Content)
                     </BitText>
 
@@ -46,28 +47,26 @@
                                     <BitButton IconName="Like" Size="BitSize.Small"
                                                OnClick="()=>{}"
                                                Style="padding:2px 4px;min-width:0;" />
-                                    <BitText Variant="BitTextVariant.Body2">253</BitText>
+                                    <BitText Typography="BitTypography.Body2">253</BitText>
                                 </BitStack>
 
-                                <BitStack Orientation="BitStackOrientation.Horizontal" Align="BitStackAlignItems.Center" Gap="4px">
-                                    <BitButton IconName="Dislike" Size="BitButtonSize.Small"
-                                               ButtonStyle="BitButtonStyle.Standard" OnClick="()=>{}"
+                                <BitStack Horizontal VerticalAlign="BitAlignment.Center" Gap="4px">
+                                    <BitButton IconName="Dislike" Size="BitSize.Small"
+                                                OnClick="()=>{}"
                                                Style="padding:2px 4px;min-width:0;" />
-                                    <BitText Variant="BitTextVariant.Body2">2</BitText>
+                                    <BitText Typography="BitTypography.Body2">2</BitText>
                                 </BitStack>
 
                                 @if (!CommentDto.ParentCommentId.HasValue)
                                 {
-                                    <BitButton Text="Reply"
-                                               ButtonStyle="BitButtonStyle.Standard"
+                                    <BitButton
                                                Style="padding:0;min-width:0;"
                                                OnClick="ReplyComment" />
                                 }
 
                                 @if (canManageComment)
                                 {
-                                    <BitButton Text="Delete"
-                                               ButtonStyle="BitButtonStyle.Standard"
+                                    <BitButton 
                                                Style="padding:0;min-width:0;"
                                                OnClick="OpenDeleteCommentDialog" />
                                 }
@@ -78,20 +77,19 @@
                                 <div style="margin-top:12px;">
                                     @if (!isRepliesShowing)
                                     {
-                                        <CommentList CommentInputLines="3"
+                                        @* <CommentList CommentInputLines="3"
                                                      ContentId="@CommentDto.ContentId"
-                                                     ParentCommentId="@CommentDto.Id" />
+                                                     ParentCommentId="@CommentDto.Id" /> *@
                                     }
                                     else
                                     {
-                                        <BitProgressIndicator Label="Đang tải..." />
+                                        <BitProgress Label="Đang tải..." />
                                     }
                                 </div>
                             }
                             else if (CommentDto.ChildrenCount > 0)
                             {
-                                <BitButton Text="Xem thêm phản hồi"
-                                           ButtonStyle="BitButtonStyle.Standard"
+                                <BitButton 
                                            Style="padding:0;min-width:0;"
                                            OnClick="ShowReplies" />
                             }
@@ -101,14 +99,14 @@
             </BitStack>
         </BitCard>
     </BitStack>
-} *@
+}
 
-@* @code {
+@code {
     [Parameter] public CommentDto? CommentDto { get; set; }
 
     [Parameter] public EventCallback<Guid> OnCommentDeleted { get; set; }
 
-    private UserDto? commenter;
+    private UserInfo? commenter;
     private bool showReplies;
     private bool isRepliesShowing;
     private bool canManageComment;
@@ -165,4 +163,4 @@
         // }
     }
 }
- *@
+

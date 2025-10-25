@@ -4,7 +4,7 @@
 public class PostMetadataAttribute : Attribute
 {
 
-    public int Id { get; set; }
+    public string Id { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string? Category { get; set; }
     public string? Cover { get; }

@@ -22,17 +22,7 @@
 
     </BitStack>
     <BitStack Horizontal HorizontalAlign="BitAlignment.End" Style="width: 100%; gap: 0.5rem;">
-        <BitSearchBox Placeholder="Tìm kiếm bài viết..."
-                      MinSuggestTriggerChars="1" Color="BitColor.Info"
-                      SuggestItemsProvider="ProvideSuggestions"
-                      Modeless ThrottleTime="0"
-                      SuggestItemTemplate="@RenderSuggestion"
-                      DebounceTime="0" Immediate FixedIcon="true" NoBorder
-                      OnSearch="OnSearchTriggered"
-                      MaxSuggestCount="5"
-                      Background="BitColorKind.Primary"
-                      Style="flex: 1;" />
-
+        
         <BitToggleButton OnIconName="@BitIconName.HazyNight" @bind-IsChecked="@IsDark"
                          OffIconName="@BitIconName.HazyDay"
                          AriaLabel="Dark Mode" Variant="BitVariant.Outline"
@@ -63,14 +53,6 @@
 @code {
     private bool IsDark = false;
 
-    private RenderFragment<string> RenderSuggestion => (item)
-        => @<BitStack FillContent
-                      Horizontal Style="padding: 0.5rem; font-size: 0.9rem;">
-    <BitIcon IconName="@BitIconName.BookAnswers" Color="BitColor.Secondary" Style="margin-right: 8px;" />
-    <BitText Typography="BitTypography.Subtitle1" Color="BitColor.Secondary">@item</BitText>
-</BitStack>
-    ;
-
     [Parameter]
     public EventCallback OnToggleDrawer { get; set; }
 
@@ -85,18 +67,4 @@
     }
 
 
-    private async ValueTask<IEnumerable<string>> ProvideSuggestions(BitSearchBoxSuggestItemsProviderRequest request)
-    {
-        if (string.IsNullOrWhiteSpace(request.SearchTerm))
-            return Array.Empty<string>();
-
-        var results = await AppDataManager.GetContentsAsync(request.SearchTerm, []);
-        return results.Take(Constants.SearchPageSize).Select(r => r.Title).ToList();
-    }
-
-    private void OnSearchTriggered(string? text)
-    {
-        if (string.IsNullOrWhiteSpace(text)) return;
-        NavigationManager.NavigateTo($"?Query={text}&Page=1");
-    }
 }

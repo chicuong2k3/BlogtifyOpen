@@ -6,7 +6,7 @@ namespace Blogtify.Client.Auth
     {
         public static Guid GetUserId(this ClaimsPrincipal principal)
         {
-            var userIdString = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userIdString = principal.FindFirst("sub")?.Value;
 
             return Guid.TryParse(userIdString, out var userId) ? userId
                 : Guid.Empty;

@@ -14,18 +14,17 @@ public record CreateCommentCommand(
     Guid? ParentId = null) : ICommand<CommentDto>;
 
 internal class CreateCommentCommandHandler(
-    ICommentRepository commentRepository,
-    IContentRepository contentRepository)
+    ICommentRepository commentRepository)
     : ICommandHandler<CreateCommentCommand, CommentDto>
 {
     public async Task<CommentDto> Handle(CreateCommentCommand command, CancellationToken cancellationToken)
     {
-        var content = await contentRepository.GetByIdAsync(command.ContentId, cancellationToken);
+        //var content = await contentRepository.GetByIdAsync(command.ContentId, cancellationToken);
 
-        if (content == null)
-        {
-            throw new NotFoundException(nameof(Content), command.ContentId.ToString());
-        }
+        //if (content == null)
+        //{
+        //    throw new NotFoundException(nameof(Content), command.ContentId.ToString());
+        //}
 
         if (command.ParentId.HasValue)
         {

@@ -81,7 +81,7 @@
 ::deep pre,
 ::deep pre code,
 ::deep code {
-    font-family: "Consolas", "Courier New", monospace !important;
+    font-family: "JetBrains Mono", "Consolas", monospace !important;
     font-size: 0.9rem !important;
     line-height: 1.5 !important;
 }

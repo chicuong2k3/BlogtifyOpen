@@ -8,7 +8,22 @@
 
     <BitStack Gap="1rem">
         <BitText Typography="BitTypography.H1">Các bài viết</BitText>
-        <BitStack Alignment="BitAlignment.End">
+        <BitStack Horizontal HorizontalAlign="BitAlignment.SpaceBetween" Alignment="BitAlignment.End">
+            <BitSearchBox Placeholder="Tìm kiếm bài viết..."
+                          Color="BitColor.Info"
+                          Modeless ThrottleTime="0" FixedIcon="true" 
+                          OnSearch="OnSearchTriggered"
+                          Background="BitColorKind.Primary"
+                          Style="flex: 1;" />
+
+            <BitDropdown Items="_categories" AriaLabel="Danh mục" Label="Danh mục"
+                         @bind-Value="_selectedCategory" Placeholder="Tất cả"
+                         TItem="BitDropdownItem<string>" TValue="string" 
+                             OnChange="OnCategoryChanged"
+                             Style="max-width: 150px"
+                         >
+            </BitDropdown>
+
             <BitDropdown Items="_sortFilters" TItem="BitDropdownItem<string>"
                          TValue="string" AriaLabel="Sắp xếp theo" Label="Sắp xếp theo"
                          @bind-Value="_selectedSortValue"
@@ -22,7 +37,7 @@
             @if (Contents is not null && Contents.Any())
             {
                 <BitStack Gap="8px">
-                    @foreach (var content in Contents.Take(_currentPage * Constants.PageSize))
+                    @foreach (var content in Contents)
                     {
                         <ContentCard Content="@content" @key="@content.GetHashCode()" />
                     }
@@ -31,17 +46,6 @@
             else
             {
                 <BitText Typography="BitTypography.Subtitle1" Style="font-weight: 600">Không có kết quả nào.</BitText>
-            }
-
-            @if (_hasMore)
-            {
-                <BitStack Alignment="BitAlignment.Center">
-                    <BitButton OnClick="LoadMore"
-                               IsLoading="_isLoading"
-                               ButtonType="BitButtonType.Button" Style="margin-top: 8px">
-                        Tải thêm
-                    </BitButton>
-                </BitStack>
             }
 
         </BitShimmer>
@@ -60,10 +64,12 @@
         new() { Text = "Cũ nhất", Value = "asc" }
     };
 
-    private int _currentPage = 1;
     private string _selectedSortValue = "desc";
+
+    private List<BitDropdownItem<string>> _categories = [];
+    private string _selectedCategory = string.Empty;
+
     private bool _isLoading = true;
-    private bool _hasMore => _currentPage * Constants.PageSize < Contents?.Count();
 
     [SupplyParameterFromQuery]
     public string Query { get; set; } = string.Empty;
@@ -76,6 +82,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        LoadCategories();
         await LoadPosts();
     }
 
@@ -89,8 +96,19 @@
 
             await LoadPosts(forceReload: true);
         }
+
+
     }
 
+    private void LoadCategories()
+    {
+        _categories = new() { new BitDropdownItem<string>() { Text = "Tất cả", Value = string.Empty } };
+        _categories.AddRange(AppDataManager.AllPostCategories.Select(c => new BitDropdownItem<string>()
+        {
+            Text = c,
+            Value = c
+        }).ToList());
+    }
 
     private async Task LoadPosts(bool forceReload = false)
     {
@@ -104,13 +122,9 @@
                 .ToList();
         }
 
-        _isLoading = false;
-    }
+        await OnSortChanged(_selectedSortValue);
 
-    private void LoadMore()
-    {
-        _currentPage++;
-        StateHasChanged();
+        _isLoading = false;
     }
 
     private async Task OnSortChanged(string value)
@@ -118,7 +132,6 @@
         if (!string.IsNullOrEmpty(value))
         {
             _selectedSortValue = value;
-            _currentPage = 1;
             Contents = _selectedSortValue?.ToLowerInvariant() switch
             {
                 "asc" => Contents
@@ -130,5 +143,24 @@
                 _ => Contents?.OrderBy(p => p.LastModified ?? DateTime.MinValue).ToList()
             };
         }
+    }
+
+    private async Task OnCategoryChanged(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            NavigationManager.NavigateTo($"/?categories={value}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/");
+        }
+
+    }
+
+    private void OnSearchTriggered(string? text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return;
+        NavigationManager.NavigateTo($"?Query={text}");
     }
 }

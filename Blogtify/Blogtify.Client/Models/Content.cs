@@ -1,8 +1,7 @@
 ﻿namespace Blogtify.Client.Models;
 
-public class Content
+public class Content : Entity<Guid>
 {
-    public int Id { get; set; }
     public string Route { get; set; } = string.Empty;
     public string Title { get; set; } = string.Empty;
     public string? Cover { get; set; }

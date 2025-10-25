@@ -72,10 +72,10 @@ public class AppDataManager
             .FirstOrDefault(p => p.Route.Equals(route, StringComparison.OrdinalIgnoreCase));
     }
 
-    public int GetContentMaxId()
-    {
-        return GetAllContents().OrderByDescending(c => c.Id).First().Id;
-    }
+    //public int GetContentMaxId()
+    //{
+    //    return GetAllContents().OrderByDescending(c => c.Id).First().Id;
+    //}
 
     public List<Models.Content> GetRecommendContents(Models.Content content)
     {
@@ -124,7 +124,7 @@ public class AppDataManager
 
                 return new Models.Content
                 {
-                    Id = id,
+                    Id = Guid.Parse(id),
                     Title = title,
                     Route = route,
                     Category = category,

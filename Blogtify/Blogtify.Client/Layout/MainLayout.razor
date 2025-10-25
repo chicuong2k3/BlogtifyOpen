@@ -80,10 +80,10 @@
 
         var root = new BitNavItem
         {
-            Text = "CHỦ ĐỀ",
-            IconName = "Bookmarks",
-            AriaLabel = "Chủ đề",
-            ChildItems = postCategories.Select(BuildSidebarItem).ToList()
+            Text = "TRANG CHỦ",
+            IconName = "Home",
+            AriaLabel = "Trang chủ",
+            Url = "/"
         };
 
         sidebarItems =
@@ -106,15 +106,6 @@
         var currentTheme = await BitThemeManager.GetCurrentThemeAsync();
         IsDark = currentTheme?.Contains("dark") ?? false;
     }
-
-    private BitNavItem BuildSidebarItem(string category) => new()
-    {
-        Text = category.ToUpperInvariant(),
-        IconName = "Cafe",
-        Url = $"/?categories={category}",
-        Title = category,
-        AriaLabel = category
-    };
 
     private void ToggleDrawer() => isDrawerOpen = !isDrawerOpen;
 
